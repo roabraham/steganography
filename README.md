@@ -8,11 +8,13 @@ To install this web application, you need a _web server_ supporting **PHP 5.4** 
 
 ## Installation
 
-Place this entire repository somewhere in your web server's document _root directory_. A subdirectory should also work.
+Place this entire repository (except the `release` subdirectory) somewhere in your web server's document _root directory_. A subdirectory should also work.
 
 ## Usage
 
 Once the web application is installed on your web server, navigate to `index.html` and follow the instructions in your web browser. To use the application on large files (at least 10 MB but it actually depends on the performance of your system) you may have to adjust the limitations defined in `include/convert.php` file and in your `php.ini` file.
+
+A _desktop version_ (powered by [PHP Desktop](https://github.com/cztomczak/phpdesktop)) is also available in the release subdirectory.
 
 ## Embedding PHP steganography class in a different web application
 
@@ -50,4 +52,6 @@ This project consists of **multiple components**, each with its **own license**.
 
 - The **Graphical User Interface (GUI)** of the *web application* (located in this directory excluding the `include` subdirectory) was built using standard [jQuery](https://jquery.com/) (located in `javascript` subdirectory) and is licensed under **MIT**.
 
-Both licenses allow commercial use under the corresponding conditions. For more details, please refer to the `license.md` file.
+- The **desktop version** (located in the `release` subdirectory) uses [PHP Desktop](https://github.com/cztomczak/phpdesktop) package and is licensed under **BSD 3-clause license**.
+
+All licenses allow commercial use under the corresponding conditions. For more details, please refer to the `license.md`.
