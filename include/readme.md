@@ -12,11 +12,11 @@ Place this entire repository somewhere in your web server's document _root direc
 
 ## Usage
 
-Once the web application is installed on your web server, navigate to `index.html` and follow the instructions in your web browser. To use the application on large files (at least 10 MB but it actually depends on the performance of your system) you may have to adjust the limitations defined in `include/convert.php` file and in your `php.ini` file.
+Once the web application is installed on your web server, navigate to `convert.php` and follow the instructions in your web browser. To use the application on large files (at least 10 MB but it actually depends on the performance of your system) you may have to adjust the limitations defined in `convert.php` file and in your `php.ini` file.
 
 ## Embedding PHP steganography class in a different web application
 
-To _embed PHP steganography class_ in a separate web application, place `include/class.php_stego.php` file in your web application and include the class in the corresponding script as you can see bellow:
+To _embed PHP steganography class_ in a separate web application, place `class.php_stego.php` file in your web application and include the class in the corresponding script as you can see bellow:
 
 ```php
 require_once 'class.php_stego.php';
@@ -40,14 +40,10 @@ $php_stego->set_encoding_direction(false);
 $output_file = $php_stego->convert();
 ```
 
-For further information on how to use the class, check `include/convert.php` script.
+For further information on how to use the class, check `convert.php` script.
 
-## Multiple Licensing Information
+## License
 
-This project consists of **multiple components**, each with its **own license**. When using this project, carefully choose based on the license of the component you intend to use:
+This module is licensed under **MIT license** (©2024 Robert Abraham).
 
-- The **core PHP application** (located in `include` directory) is licensed under **MIT** (©2024 Robert Abraham).
-
-- The **Graphical User Interface (GUI)** of the *web application* (located in this directory excluding the `include` subdirectory) was built using standard [jQuery](https://jquery.com/) (located in `javascript` subdirectory) and is licensed under **MIT**.
-
-Both licenses allow commercial use under the corresponding conditions. For more details, please refer to the `license.md` file.
+For more details, please refer to the `license.md` file.
