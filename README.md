@@ -14,7 +14,7 @@ Place this entire repository (except the `release` subdirectory) somewhere in yo
 
 Once the web application is installed on your web server, navigate to `index.html` and follow the instructions in your web browser. To use the application on large files (at least 10 MB but it actually depends on the performance of your system) you may have to adjust the limitations defined in `include/convert.php` file and in your `php.ini` file.
 
-A _desktop version_ (powered by [PHP Desktop](https://github.com/cztomczak/phpdesktop)) is also available in the release subdirectory.
+A _desktop version_ (powered by [PHP Desktop](https://github.com/cztomczak/phpdesktop)) is also available in the `release` subdirectory.
 
 ## Embedding PHP steganography class in a different web application
 
