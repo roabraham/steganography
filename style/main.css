@@ -110,3 +110,7 @@ div.button a{
     background: #3C96FF;
     padding: 7px;
 }
+p.required_field_description{
+    font-weight:bold;
+    font-size:small;
+}
