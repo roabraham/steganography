@@ -4,7 +4,7 @@
      * Simple Image Steganography
      * This class provides a simple module for effective image steganography designed to hide larger amount of data in an image file.
      *
-     * MIT License
+     * Modified MIT License
      *
      * Copyright (c) 2024 Robert Abraham
      *
@@ -17,6 +17,12 @@
      *
      * The above copyright notice and this permission notice shall be included in all
      * copies or substantial portions of the Software.
+     *
+     * The Software and its derivatives may not be used for any harmful purposes,
+     * including but not limited to activities that compromise privacy,
+     * engage in illegal activities, or cause harm to individuals, groups, or entities.
+     * The user of the Software agrees to use it responsibly and in compliance with
+     * applicable laws and ethical standards.
      *
      * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
      * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,

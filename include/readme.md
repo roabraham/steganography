@@ -44,6 +44,6 @@ For further information on how to use the class, check `convert.php` script.
 
 ## License
 
-This module is licensed under **MIT license** (©2024 Robert Abraham).
+This module is licensed under a **modified MIT license** (©2024 Robert Abraham).
 
 For more details, please refer to the `license.md` file.

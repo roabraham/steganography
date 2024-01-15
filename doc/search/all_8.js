@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['mit_20license',['MIT License',['../md_license.html',1,'']]]
+  ['modified_20mit_20license',['Modified MIT License',['../md_license.html',1,'']]]
 ];
