@@ -113,7 +113,7 @@
                 <div class="file_input">
                     <label for="input_file">Open</label>
                     <input type="file" name="input_file" id="input_file" onchange="change_filename(this, 'input_filename');"/>
-                    <div id="input_filename">No file selected</div>
+                    <div id="input_filename">No file selected (max. <?php echo trim(ini_get('upload_max_filesize')); ?>)</div>
                 </div>
             </div>
             <div class="title">
@@ -133,7 +133,7 @@
                 <div class="file_input">
                     <label for="carrier_file">Open</label>
                     <input type="file" name="carrier_file" id="carrier_file" accept="image/*" onchange="change_filename(this, 'carrier_file_filename');"/>
-                    <div id="carrier_file_filename">No file selected</div>
+                    <div id="carrier_file_filename">No file selected (max. <?php echo trim(ini_get('upload_max_filesize')); ?>)</div>
                 </div>
             </div>
             <div class="title" id="aspect_ratio_container">

@@ -69,7 +69,7 @@
             $result_value .= "</ul>\n";
             $result_value .= "</div>\n";
             $result_value .= "<div class=\"button\">\n";
-            $result_value .= "<a href=\"../index.html\">Back</a>\n";
+            $result_value .= "<a href=\"../index.php\">Back</a>\n";
             $result_value .= "</div>\n";
             $result_value .= "</div>\n";
             $result_value .= "</body>\n";
