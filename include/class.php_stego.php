@@ -66,6 +66,12 @@
         /** @var integer: the level of compression */
         protected $compression_level = -1;
 
+        /** @var string: the original filename of the input to encode in the image */
+        protected $original_filename = null;
+
+        /** @var string: output filename (helper) */
+        protected $new_filename = 'output.png';
+
         /** @return binary: the raw input data you want to hide */
         public function get_input_data() { return $this->input_data; }
 
@@ -86,6 +92,12 @@
 
         /** @return integer: get the level of compression */
         public function get_compression_level() { return $this->compression_level; }
+
+        /** @return string: the original filename of the input encoded in the image */
+        public function get_original_filename() { return $this->original_filename; }
+
+        /** @return string: output filename */
+        public function get_new_filename() { return $this->new_filename; }
 
         /**
          * Sets the input data you want to hide
@@ -211,6 +223,26 @@
         }
 
         /**
+         * Set original filename to encode in the output image (for proper download filename when decoding)
+         * @param string $new_original_filename: the filename to encode
+         * @return boolean: returns TRUE on success, FALSE otherwise
+         */
+        public function set_original_filename($new_original_filename) {
+            try {
+                $new_original_filename_fixed = trim($new_original_filename);
+                if (strlen($new_original_filename_fixed) >= 1) {
+                    $this->original_filename = $new_original_filename_fixed;
+                } else {
+                    $this->original_filename = null;
+                }
+                return true;
+            } catch (Exception $x) {
+                echo 'Exception: ' . trim($x->getMessage());
+                return false;
+            }
+        }
+
+        /**
          * Encrypts the input data with the specified key (helper)
          * @param string $input_data: the input data to encrypt
          * @param string $encryption_key: encrypt input data with this key
@@ -269,10 +301,17 @@
         public function convert() {
             try {
                 if (!$this->input_data) { return null; }
+                if (!(strlen($this->encryption_key) >= 1)) { return null; }
                 //Create image from input data
                 if ($this->encoding_direction) {
-                    if (!(strlen($this->encryption_key) >= 1)) { return null; }
-                    $input_data_final = self::encrypt_data(gzcompress($this->input_data, $this->compression_level), $this->encryption_key);
+                    $input_data_final = gzcompress($this->input_data, $this->compression_level);
+                    if (!$input_data_final) { return null; }
+                    if (strlen($this->original_filename) >= 1) {
+                        $base_filename = trim(pathinfo($this->original_filename, PATHINFO_FILENAME));
+                        if (strlen($base_filename) >= 1) { $this->new_filename = "{$base_filename}.png"; }
+                        $input_data_final = 'ORIGINAL_FILENAME:' . base64_encode($this->original_filename) . "#{$input_data_final}";
+                    }
+                    $input_data_final = self::encrypt_data($input_data_final, $this->encryption_key);
                     if (!$input_data_final) { return null; }
                     $data_base64 = base64_encode($input_data_final) . '#';
                     $data_length = strlen($data_base64);
@@ -359,7 +398,6 @@
                     return $output_image;
                 }
                 //Create binary data from input
-                if (!(strlen($this->encryption_key) >= 1)) { return null; }
                 $image_data = imagecreatefromstring($this->input_data);
                 if ($image_data === false) { return null; }
                 $image_width = imagesx($image_data);
@@ -399,6 +437,14 @@
                 if ($binary_data === false) { return null; }
                 $binary_data = self::decrypt_data($binary_data, $this->encryption_key);
                 if (!$binary_data) { return null; }
+                $this->new_filename = 'output.dat';
+                $pattern = '/^ORIGINAL_FILENAME:([^#]+)#/';
+                $matches = array();
+                if (preg_match($pattern, $binary_data, $matches)) {
+                    $this->new_filename = trim(base64_decode($matches[1]));
+                    $binary_data = preg_replace($pattern, '', $binary_data);
+                    if (!$binary_data) { return null; }
+                }
                 $binary_data = gzuncompress($binary_data);
                 if ($binary_data === false) { return null; }
                 return $binary_data;

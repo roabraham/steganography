@@ -112,15 +112,15 @@
             if (!$php_stego->set_carrier_data(file_get_contents($carrier_file))) { die(handle_input_errors('Failed to load carrier file!')); }
         }
         if (!$php_stego->set_input_data(file_get_contents($input_file))) { die(handle_input_errors('Failed to load input file!')); }
+        $php_stego->set_original_filename($_FILES['input_file']['name']);
         $php_stego->set_compression_level($compression_level);
         ini_set('max_execution_time', PROCESS_TIMEOUT);
         ini_set('memory_limit', PROCESS_MEMORY_LIMIT);
         $output_file = $php_stego->convert();
         if (!$output_file) { die(handle_input_errors('Failed to create image from binary data!')); }
-        $output_filename = trim($_FILES['input_file']['name']) . '.png';
         header('Content-Type: image/png');
         header('Content-Description: File Transfer');
-        header("Content-Disposition: attachment; filename=\"{$output_filename}\"");
+        header('Content-Disposition: attachment; filename="' . $php_stego->get_new_filename() . '"');
         header('Expires: 0');
         header('Cache-Control: must-revalidate');
         header('Pragma: public');
@@ -135,14 +135,7 @@
     ini_set('memory_limit', PROCESS_MEMORY_LIMIT);
     $output_file = $php_stego->convert();
     if (!$output_file) { die(handle_input_errors('Failed to create output! Incorrect password or file provided?')); }
-    $original_filename = trim(basename($_FILES['input_file']['name']));
-    $output_filename = explode('.', $original_filename);
-    array_pop($output_filename);
-    if ($output_filename) {
-        $output_filename = trim(implode('.', $output_filename));
-    } else {
-        $output_filename = $original_filename;
-    }
+    $output_filename = $php_stego->get_new_filename();
     header('Content-Description: File Transfer');
     header('Content-Type: application/octet-stream');
     header("Content-Disposition: attachment; filename=\"{$output_filename}\"");
