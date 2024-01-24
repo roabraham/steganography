@@ -135,10 +135,9 @@
     ini_set('memory_limit', PROCESS_MEMORY_LIMIT);
     $output_file = $php_stego->convert();
     if (!$output_file) { die(handle_input_errors('Failed to create output! Incorrect password or file provided?')); }
-    $output_filename = $php_stego->get_new_filename();
     header('Content-Description: File Transfer');
     header('Content-Type: application/octet-stream');
-    header("Content-Disposition: attachment; filename=\"{$output_filename}\"");
+    header('Content-Disposition: attachment; filename="' . $php_stego->get_new_filename() . '"');
     header('Expires: 0');
     header('Cache-Control: must-revalidate');
     header('Pragma: public');
