@@ -56,16 +56,17 @@
             $result_value .= "<div class=\"title\">\n";
             $result_value .= "<h1>ERROR: {$error_message_fixed}</h1>\n";
             $result_value .= "<div class=\"url\">\n";
-            $result_value .= '<p><strong>Direct usage</strong>:&nbsp;' . basename(__FILE__) . "?input_file=INPUT_FILEPATH&amp;bin_to_image=BIN_TO_IMAGE&amp;carrier_file=CARRIER_FILEPATH&amp;aspect_ratio=ASPECT_RATIO&amp;color_component=COLOR_COMPONENT&amp;encryption_password=ENCRYPTION_PASSWORD</p>\n";
+            $result_value .= '<p><strong>Direct usage</strong>:&nbsp;' . basename(__FILE__) . "?input_file=INPUT_FILEPATH&amp;bin_to_image=BIN_TO_IMAGE&amp;carrier_file=CARRIER_FILEPATH&amp;aspect_ratio=ASPECT_RATIO&amp;color_component=COLOR_COMPONENT&amp;encryption_password=ENCRYPTION_PASSWORD&amp;compression_level=COMPRESSION_LEVEL</p>\n";
             $result_value .= "</div>\n";
             $result_value .= "<p>where</p>\n";
             $result_value .= "<ul>\n";
             $result_value .= "<li><strong>INPUT_FILEPATH</strong> is the file you want to convert into an image</li>\n";
             $result_value .= "<li><strong>BIN_TO_IMAGE</strong>: is set to 1 then binary data will be converted to an image file, image file will be converted to binary otherwise (default: 1)</li>\n";
-            $result_value .= "<li><strong>CARRIER_FILEPATH</strong> is the base image you want to be the carrier of the encoded binary data (optional)</li>\n";
+            $result_value .= "<li><strong>CARRIER_FILEPATH</strong> is the base image you want to be the carrier of the encoded binary data</li>\n";
             $result_value .= "<li><strong>ASPECT_RATIO</strong> is the preferred preferred carrier image dimensions (SQUARE|SMALLSCREEN|WIDESCREEN|AUTO, default: AUTO)</li>\n";
             $result_value .= "<li><strong>COLOR_COMPONENT</strong>: the color component you want to replace with the binary data (RED|GREEN|BLUE, default: RED)</li>\n";
-            $result_value .= "<li><strong>ENCRYPTION_PASSWORD</strong>: the encryption key for the data to hide (optional)</li>\n";
+            $result_value .= "<li><strong>ENCRYPTION_PASSWORD</strong>: the encryption key for the data to hide</li>\n";
+            $result_value .= "<li><strong>COMPRESSION_LEVEL</strong>: compress input data with this level of compression (default: 6)</li>\n";
             $result_value .= "</ul>\n";
             $result_value .= "</div>\n";
             $result_value .= "<div class=\"button\">\n";
@@ -83,9 +84,18 @@
     /** @cond */
 
     //Check input
-    if (!$input_file) { die(handle_input_errors('Input file not specified!')); }
+    $original_filename = null;
+    if ($input_file) {
+        if (!isset($_FILES['input_file']['name'])) { die(handle_input_errors('Invalid input file!')); }
+        $original_filename = trim(basename($_FILES['input_file']['name']));
+    } else {
+        if (!isset($_REQUEST['input_file'])) { die(handle_input_errors('Input file not provided!')); }
+        $input_file = $_REQUEST['input_file'];
+        if (!$input_file) { die(handle_input_errors('Invalid input file!')); }
+        $original_filename = trim(basename($input_file));
+    }
     if (!file_exists($input_file)) { die(handle_input_errors('Input file does not exist!')); }
-    if (!isset($_FILES['input_file']['name'])) { die(handle_input_errors('Invalid input file!')); }
+    if (!$original_filename) { die(handle_input_errors('Invalid input filename!')); }
     if ($encryption_password === false) { die(handle_input_errors('Encryption key not set!')); }
     //Load Steganography class
     require_once 'class.php_stego.php';
@@ -106,13 +116,16 @@
     }
     //Create image from input file
     if ($bin_to_image) {
-        if ($carrier_file) {
-            if (!file_exists($carrier_file)) { die(handle_input_errors('Carrier file does not exist!')); }
-            if (!preg_match('/\.(jpg|jpeg|png|gif|bmp|wbmp|gd2|webp)$/i', trim(basename($_FILES['carrier_file']['name'])))) { die(handle_input_errors('Carrier file must be a JPEG, PNG, GIF, BMP, WBMP, GD2 or WEBP image!')); }
-            if (!$php_stego->set_carrier_data(file_get_contents($carrier_file))) { die(handle_input_errors('Failed to load carrier file!')); }
+        if (!$carrier_file) {
+            if (!isset($_REQUEST['carrier_file'])) { die(handle_input_errors('Carrier file not provided!')); }
+            $carrier_file = $_REQUEST['carrier_file'];
+            if (!$carrier_file) { die(handle_input_errors('Invalid carrier file!')); }
         }
+        if (!file_exists($carrier_file)) { die(handle_input_errors('Carrier file does not exist!')); }
+        if (!preg_match('/\.(jpg|jpeg|png|gif|bmp|wbmp|gd2|webp)$/i', trim(basename($_FILES['carrier_file']['name'])))) { die(handle_input_errors('Carrier file must be a JPEG, PNG, GIF, BMP, WBMP, GD2 or WEBP image!')); }
+        if (!$php_stego->set_carrier_data(file_get_contents($carrier_file))) { die(handle_input_errors('Failed to load carrier file!')); }
         if (!$php_stego->set_input_data(file_get_contents($input_file))) { die(handle_input_errors('Failed to load input file!')); }
-        $php_stego->set_original_filename($_FILES['input_file']['name']);
+        $php_stego->set_original_filename($original_filename);
         $php_stego->set_compression_level($compression_level);
         ini_set('max_execution_time', PROCESS_TIMEOUT);
         ini_set('memory_limit', PROCESS_MEMORY_LIMIT);
@@ -129,7 +142,7 @@
         exit;
     }
     //Create binary data from input file
-    if (!preg_match('/\.(jpg|jpeg|png|gif|bmp|wbmp|gd2|webp)$/i', trim(basename($_FILES['input_file']['name'])))) { die(handle_input_errors('Input file must be a JPEG, PNG, GIF, BMP, WBMP, GD2 or WEBP image!')); }
+    if (!preg_match('/\.(jpg|jpeg|png|gif|bmp|wbmp|gd2|webp)$/i', $original_filename)) { die(handle_input_errors('Input file must be a JPEG, PNG, GIF, BMP, WBMP, GD2 or WEBP image!')); }
     if (!$php_stego->set_input_data(file_get_contents($input_file))) { die(handle_input_errors('Failed to load input file!')); }
     ini_set('max_execution_time', PROCESS_TIMEOUT);
     ini_set('memory_limit', PROCESS_MEMORY_LIMIT);
