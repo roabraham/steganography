@@ -157,8 +157,7 @@
             <div class="title" id="compression_level_container">
                 <h2>Compression level*</h2>
                 <p class="description">The compression level of the output</p>
-                <div class="radio_button"><input type="radio" name="compression_level" value="0" required="required" /><span>0 (no compression)</span></div>
-                <div class="radio_button"><input type="radio" name="compression_level" value="1" required="required" /><span>1</span></div>
+                <div class="radio_button"><input type="radio" name="compression_level" value="1" required="required" /><span>1 (minimum compression)</span></div>
                 <div class="radio_button"><input type="radio" name="compression_level" value="2" required="required" /><span>2</span></div>
                 <div class="radio_button"><input type="radio" name="compression_level" value="3" required="required" /><span>3</span></div>
                 <div class="radio_button"><input type="radio" name="compression_level" value="4" required="required" /><span>4</span></div>

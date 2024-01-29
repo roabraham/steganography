@@ -215,6 +215,7 @@
             try {
                 if (!isset($new_compression_level)) { return false; }
                 $this->compression_level = min(max(intval($new_compression_level), -1), 9);
+                if ($this->compression_level == 0) { $this->compression_level = 1; }
                 return true;
             } catch (Exception $x) {
                 echo 'Exception: ' . trim($x->getMessage());
