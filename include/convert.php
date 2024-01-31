@@ -5,12 +5,6 @@
      * This script will convert any binary data to image vica-versa
      */
 
-    /** Ajax timeout in seconds */
-    define('PROCESS_TIMEOUT', 600);
-
-    /** Ajax memory limit */
-    define('PROCESS_MEMORY_LIMIT', '2048M');
-
     //ini_set('display_errors', 1);
 
     /** The absolute filepath of the uploaded input file */
@@ -34,6 +28,27 @@
     /** Compress input data with this level of compression */
     $compression_level = isset($_REQUEST['compression_level']) ? $_REQUEST['compression_level'] : null;
 
+    /** Time limit for the conversion process in secods (overrides `php.ini`) */
+    $process_timeout = isset($_REQUEST['process_timeout']) ? max(intval(trim($_REQUEST['process_timeout'])), 0) : null;
+
+    /** Memory limit for the conversion process (overrides `php.ini`) */
+    $process_memory_limit = isset($_REQUEST['process_memory_limit']) ? trim($_REQUEST['process_memory_limit']) : null;
+
+    /** @cond */
+
+    //Load configuration file
+    require_once(str_replace('\\', '/', __DIR__) . '/config.php');
+    if (ALLOW_OVERRIDE_PHP_SETTINGS) {
+        $process_memory_limit = preg_replace('/[^0-9a-z\-]/i', '', $process_memory_limit);
+        if ($process_memory_limit != '-1') {
+            if (!preg_match('/^[0-9]+(K|M|G|)$/i', $process_memory_limit)) { $process_memory_limit = null; }
+        }
+        if (isset($process_timeout)) { ini_set('max_execution_time', $process_timeout); }
+        if (isset($process_memory_limit)) { ini_set('memory_limit', $process_memory_limit); }
+    }
+
+    /** @endcond */
+
     /**
      * Generates an error page with the supplied error message
      * @param string $error_message: the error message you want to show
@@ -56,7 +71,8 @@
             $result_value .= "<div class=\"title\">\n";
             $result_value .= "<h1>ERROR: {$error_message_fixed}</h1>\n";
             $result_value .= "<div class=\"url\">\n";
-            $result_value .= '<p><strong>Direct usage</strong>:&nbsp;' . basename(__FILE__) . "?input_file=INPUT_FILEPATH&amp;bin_to_image=BIN_TO_IMAGE&amp;carrier_file=CARRIER_FILEPATH&amp;aspect_ratio=ASPECT_RATIO&amp;color_component=COLOR_COMPONENT&amp;encryption_password=ENCRYPTION_PASSWORD&amp;compression_level=COMPRESSION_LEVEL</p>\n";
+            $server_parameters = ALLOW_OVERRIDE_PHP_SETTINGS ? '&amp;process_timeout=PROCESS_TIMEOUT&amp;process_memory_limit=PROCESS_MEMORY_LIMIT' : '';
+            $result_value .= '<p><strong>Direct usage</strong>:&nbsp;' . basename(__FILE__) . "?input_file=INPUT_FILEPATH&amp;bin_to_image=BIN_TO_IMAGE&amp;carrier_file=CARRIER_FILEPATH&amp;aspect_ratio=ASPECT_RATIO&amp;color_component=COLOR_COMPONENT&amp;encryption_password=ENCRYPTION_PASSWORD&amp;compression_level=COMPRESSION_LEVEL{$server_parameters}</p>\n";
             $result_value .= "</div>\n";
             $result_value .= "<p>where</p>\n";
             $result_value .= "<ul>\n";
@@ -67,6 +83,10 @@
             $result_value .= "<li><strong>COLOR_COMPONENT</strong>: the color component you want to replace with the binary data (RED|GREEN|BLUE, default: RED)</li>\n";
             $result_value .= "<li><strong>ENCRYPTION_PASSWORD</strong>: the encryption key for the data to hide</li>\n";
             $result_value .= "<li><strong>COMPRESSION_LEVEL</strong>: compress input data with this level of compression (default: 6)</li>\n";
+            if (ALLOW_OVERRIDE_PHP_SETTINGS) {
+                $result_value .= "<li><strong>PROCESS_TIMEOUT</strong>: Time limit for the conversion process in secods (overrides php.ini, optional)</li>\n";
+                $result_value .= "<li><strong>PROCESS_MEMORY_LIMIT</strong>: Memory limit for the conversion process (overrides php.ini, optional)</li>\n";
+            }
             $result_value .= "</ul>\n";
             $result_value .= "</div>\n";
             $result_value .= "<div class=\"button\">\n";
@@ -98,7 +118,7 @@
     if (!$original_filename) { die(handle_input_errors('Invalid input filename!')); }
     if ($encryption_password === false) { die(handle_input_errors('Encryption key not set!')); }
     //Load Steganography class
-    require_once 'class.php_stego.php';
+    require_once(str_replace('\\', '/', __DIR__) . '/class.php_stego.php');
     $php_stego = new PHP_STEGO();
     $php_stego->set_encoding_direction($bin_to_image);
     if (!$php_stego->set_encryption_key($encryption_password)) {
@@ -127,8 +147,6 @@
         if (!$php_stego->set_input_data(file_get_contents($input_file))) { die(handle_input_errors('Failed to load input file!')); }
         $php_stego->set_original_filename($original_filename);
         $php_stego->set_compression_level($compression_level);
-        ini_set('max_execution_time', PROCESS_TIMEOUT);
-        ini_set('memory_limit', PROCESS_MEMORY_LIMIT);
         $output_file = $php_stego->convert();
         if (!$output_file) { die(handle_input_errors('Failed to create image from binary data!')); }
         header('Content-Type: image/png');
@@ -144,8 +162,6 @@
     //Create binary data from input file
     if (!preg_match('/\.(jpg|jpeg|png|gif|bmp|wbmp|gd2|webp)$/i', $original_filename)) { die(handle_input_errors('Input file must be a JPEG, PNG, GIF, BMP, WBMP, GD2 or WEBP image!')); }
     if (!$php_stego->set_input_data(file_get_contents($input_file))) { die(handle_input_errors('Failed to load input file!')); }
-    ini_set('max_execution_time', PROCESS_TIMEOUT);
-    ini_set('memory_limit', PROCESS_MEMORY_LIMIT);
     $output_file = $php_stego->convert();
     if (!$output_file) { die(handle_input_errors('Failed to create output! Incorrect password or file provided?')); }
     header('Content-Description: File Transfer');

@@ -77,10 +77,6 @@ Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:ac060051a12b56a2c101f8f2bc9a8ef68"><td class="memItemLeft" align="right" valign="top">const&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="convert_8php.html#ac060051a12b56a2c101f8f2bc9a8ef68">PROCESS_TIMEOUT</a> 600</td></tr>
-<tr class="separator:ac060051a12b56a2c101f8f2bc9a8ef68"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad72faddb922819fd2d871626473e6f87"><td class="memItemLeft" align="right" valign="top">const&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="convert_8php.html#ad72faddb922819fd2d871626473e6f87">PROCESS_MEMORY_LIMIT</a> '2048M'</td></tr>
-<tr class="separator:ad72faddb922819fd2d871626473e6f87"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8cb8e3efca099d7c567f909a4167156c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="convert_8php.html#a8cb8e3efca099d7c567f909a4167156c">$input_file</a> = isset($_FILES['input_file']['tmp_name']) ? $_FILES['input_file']['tmp_name'] : false</td></tr>
 <tr class="separator:a8cb8e3efca099d7c567f909a4167156c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6be01ae3338450196427a4180a4a1f13"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="convert_8php.html#a6be01ae3338450196427a4180a4a1f13">$bin_to_image</a> = isset($_REQUEST['bin_to_image']) ? $_REQUEST['bin_to_image'] : true</td></tr>
@@ -95,6 +91,10 @@ Variables</h2></td></tr>
 <tr class="separator:a99204040b0413193aa45b43e771c89a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9a4e30766e452f0d2feaecd666787ca1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="convert_8php.html#a9a4e30766e452f0d2feaecd666787ca1">$compression_level</a> = isset($_REQUEST['compression_level']) ? $_REQUEST['compression_level'] : null</td></tr>
 <tr class="separator:a9a4e30766e452f0d2feaecd666787ca1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af11e0521098d09eafc1df4d25f789df5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="convert_8php.html#af11e0521098d09eafc1df4d25f789df5">$process_timeout</a> = isset($_REQUEST['process_timeout']) ? max(intval(trim($_REQUEST['process_timeout'])), 0) : null</td></tr>
+<tr class="separator:af11e0521098d09eafc1df4d25f789df5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ec97c8d1739b568fe83c017226fc949"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="convert_8php.html#a9ec97c8d1739b568fe83c017226fc949">$process_memory_limit</a> = isset($_REQUEST['process_memory_limit']) ? trim($_REQUEST['process_memory_limit']) : null</td></tr>
+<tr class="separator:a9ec97c8d1739b568fe83c017226fc949"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Simple Image Steganography - Call script for Ajax This script will convert any binary data to image vica-versa </p>
@@ -124,7 +124,7 @@ Variables</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>string: the HTML code of the error page </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00042">42</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00057">57</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
 
 </div>
 </div>
@@ -142,7 +142,7 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 <p>The aspect ratio of the output image file that carries the encoded input data (SQUARE|SMALLSCREEN|WIDESCREEN|AUTO) </p>
 
-<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00026">26</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00020">20</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
 
 </div>
 </div>
@@ -159,7 +159,7 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 <p>The direction of the encoding process: if set TRUE, the input file will be converted to an image file, the encoded binary data will be extracted from the uploaded image file otherwise </p>
 
-<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00020">20</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00014">14</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
 
 </div>
 </div>
@@ -176,7 +176,7 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 <p>The absolute filepath of the carrier image file you want to encode the input data into </p>
 
-<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00023">23</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00017">17</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
 
 </div>
 </div>
@@ -193,7 +193,7 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 <p>The color component to replace with the input data you want to encode into the carrier image file; the replaced color component if you are decoding the input image file (RED|GREEN|BLUE) </p>
 
-<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00029">29</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00023">23</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
 
 </div>
 </div>
@@ -210,7 +210,7 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 <p>Compress input data with this level of compression </p>
 
-<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00035">35</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00029">29</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
 
 </div>
 </div>
@@ -227,7 +227,7 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 <p>Encrypt the uploaded input file with this password if it is not encrypted already </p>
 
-<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00032">32</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00026">26</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
 
 </div>
 </div>
@@ -244,41 +244,41 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 <p>The absolute filepath of the uploaded input file </p>
 
-<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00017">17</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00011">11</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
 
 </div>
 </div>
-<a id="ad72faddb922819fd2d871626473e6f87"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad72faddb922819fd2d871626473e6f87">&#9670;&nbsp;</a></span>PROCESS_MEMORY_LIMIT</h2>
+<a id="a9ec97c8d1739b568fe83c017226fc949"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ec97c8d1739b568fe83c017226fc949">&#9670;&nbsp;</a></span>$process_memory_limit</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const PROCESS_MEMORY_LIMIT '2048M'</td>
+          <td class="memname">$process_memory_limit = isset($_REQUEST['process_memory_limit']) ? trim($_REQUEST['process_memory_limit']) : null</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Ajax memory limit </p>
+<p>Memory limit for the conversion process (overrides <code>php.ini</code>) </p>
 
-<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00012">12</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00035">35</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
 
 </div>
 </div>
-<a id="ac060051a12b56a2c101f8f2bc9a8ef68"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac060051a12b56a2c101f8f2bc9a8ef68">&#9670;&nbsp;</a></span>PROCESS_TIMEOUT</h2>
+<a id="af11e0521098d09eafc1df4d25f789df5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af11e0521098d09eafc1df4d25f789df5">&#9670;&nbsp;</a></span>$process_timeout</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const PROCESS_TIMEOUT 600</td>
+          <td class="memname">$process_timeout = isset($_REQUEST['process_timeout']) ? max(intval(trim($_REQUEST['process_timeout'])), 0) : null</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Ajax timeout in seconds </p>
+<p>Time limit for the conversion process in secods (overrides <code>php.ini</code>) </p>
 
-<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00009">9</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00032">32</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
 
 </div>
 </div>

@@ -1,3 +1,15 @@
+<?php
+    /**
+     * @file
+     * Simple Image Steganography - Frontend
+     * This is a simple frontend for the web application
+     */
+
+    /** @cond */
+
+    //Load configuration file
+    require_once(str_replace('\\', '/', __DIR__) . '/include/config.php');
+?>
 <!DOCTYPE html>
 <html>
     <head>
@@ -167,6 +179,18 @@
                 <div class="radio_button"><input type="radio" name="compression_level" value="8" required="required" /><span>8</span></div>
                 <div class="radio_button"><input type="radio" name="compression_level" value="9" required="required" /><span>9 (maximum compression)</span></div>
             </div>
+            <?php if (ALLOW_OVERRIDE_PHP_SETTINGS): ?>
+                <div class="title">
+                    <h2>Process timeout (advanced)</h2>
+                    <p class="description">Time limit for the conversion process in secods. If you set it 0, there will be no time limit.</p>
+                    <input class="large" type="text" name="process_timeout" maxlength="4" value="<?php echo trim(ini_get('max_execution_time')); ?>"/>
+                </div>
+                <div class="title">
+                    <h2>Process memory limit (advanced)</h2>
+                    <p class="description">Memory limit for the conversion process. If you set it -1, there will be no limit. If you omit (K, M or G) at the end, the value will be considered bytes.</p>
+                    <input class="large" type="text" name="process_memory_limit" maxlength="8" value="<?php echo trim(ini_get('memory_limit')); ?>"/>
+                </div>
+            <?php endif; ?>
             <div class="title">
                 <input type="submit" value="Submit" />
             </div>
