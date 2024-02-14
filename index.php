@@ -165,6 +165,7 @@
                 <div class="radio_button"><input type="radio" name="color_component" value="RED" required="required" checked /><span>red</span></div>
                 <div class="radio_button"><input type="radio" name="color_component" value="GREEN" required="required" /><span>green</span></div>
                 <div class="radio_button"><input type="radio" name="color_component" value="BLUE" required="required" /><span>blue</span></div>
+                <div class="radio_button"><input type="radio" name="color_component" value="ALPHA" required="required" /><span>alpha channel (transparency)</span></div>
             </div>
             <div class="title" id="compression_level_container">
                 <h2>Compression level*</h2>

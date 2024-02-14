@@ -19,7 +19,7 @@
     /** The aspect ratio of the output image file that carries the encoded input data (SQUARE|SMALLSCREEN|WIDESCREEN|AUTO) */
     $aspect_ratio = isset($_REQUEST['aspect_ratio']) ? trim($_REQUEST['aspect_ratio']) : false;
 
-    /** The color component to replace with the input data you want to encode into the carrier image file; the replaced color component if you are decoding the input image file (RED|GREEN|BLUE) */
+    /** The color component to replace with the input data you want to encode into the carrier image file; the replaced color component if you are decoding the input image file (RED|GREEN|BLUE|ALPHA) */
     $color_component = isset($_REQUEST['color_component']) ? $_REQUEST['color_component'] : false;
 
     /** Encrypt the uploaded input file with this password if it is not encrypted already */
@@ -80,7 +80,7 @@
             $result_value .= "<li><strong>BIN_TO_IMAGE</strong>: is set to 1 then binary data will be converted to an image file, image file will be converted to binary otherwise (default: 1)</li>\n";
             $result_value .= "<li><strong>CARRIER_FILEPATH</strong> is the base image you want to be the carrier of the encoded binary data</li>\n";
             $result_value .= "<li><strong>ASPECT_RATIO</strong> is the preferred preferred carrier image dimensions (SQUARE|SMALLSCREEN|WIDESCREEN|AUTO, default: AUTO)</li>\n";
-            $result_value .= "<li><strong>COLOR_COMPONENT</strong>: the color component you want to replace with the binary data (RED|GREEN|BLUE, default: RED)</li>\n";
+            $result_value .= "<li><strong>COLOR_COMPONENT</strong>: the color component you want to replace with the binary data (RED|GREEN|BLUE|ALPHA, default: RED)</li>\n";
             $result_value .= "<li><strong>ENCRYPTION_PASSWORD</strong>: the encryption key for the data to hide</li>\n";
             $result_value .= "<li><strong>COMPRESSION_LEVEL</strong>: compress input data with this level of compression (default: 6)</li>\n";
             if (ALLOW_OVERRIDE_PHP_SETTINGS) {

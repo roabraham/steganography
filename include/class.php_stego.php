@@ -173,14 +173,14 @@
 
         /**
          * Set the target color component to modify on the carrier
-         * @param string $new_target_rgb_component: the color component to modify (RED|GREEN|BLUE)
+         * @param string $new_target_rgb_component: the color component to modify (RED|GREEN|BLUE|ALPHA)
          * @return boolean: returns TRUE on success, FALSE otherwise
          */
         public function set_target_rgb_component($new_target_rgb_component) {
             try {
                 $new_target_rgb_component_fixed = strtoupper(trim($new_target_rgb_component));
                 if (!$new_target_rgb_component_fixed) { return false; }
-                if (!preg_match('/^(RED|GREEN|BLUE)$/', $new_target_rgb_component_fixed)) { return false; }
+                if (!preg_match('/^(RED|GREEN|BLUE|ALPHA)$/', $new_target_rgb_component_fixed)) { return false; }
                 $this->target_rgb_component = $new_target_rgb_component_fixed;
                 return true;
             } catch (Exception $x) {
@@ -354,6 +354,10 @@
                         imagedestroy($image_data);
                         $image_data = $new_image_data;
                         if ($image_data === false) { return null; }
+                        if ($this->target_rgb_component == 'ALPHA') {
+                            imagealphablending($image_data, false);
+                            imagesavealpha($image_data, true);
+                        }
                         $using_carrier = true;
                     } else {
                         if ($this->selected_carrier_dimension == 'AUTO') {
@@ -382,6 +386,7 @@
                                 case 'RED': $new_color = imagecolorallocate($image_data, $new_color_component, $green, $blue); break;
                                 case 'GREEN': $new_color = imagecolorallocate($image_data, $red, $new_color_component, $blue); break;
                                 case 'BLUE': $new_color = imagecolorallocate($image_data, $red, $green, $new_color_component); break;
+                                case 'ALPHA': $new_color = imagecolorallocatealpha($image_data, $red, $green, $blue, $new_color_component); break;
                                 default: return null;
                             }
                         } else {
@@ -425,6 +430,13 @@
                             case 'RED': $current_byte = chr($red); break;
                             case 'GREEN': $current_byte = chr($green); break;
                             case 'BLUE': $current_byte = chr($blue); break;
+                            case 'ALPHA':
+                            {
+                                $colors = imagecolorsforindex($image_data, $color);
+                                if (!isset($colors['alpha'])) { return null; }
+                                $current_byte = chr($colors['alpha']);
+                                break;
+                            }
                             default: return null;
                         }
                         if ($current_byte == '#') { break 2; }
