@@ -307,6 +307,7 @@
                 if ($this->encoding_direction) {
                     $input_data_final = gzcompress($this->input_data, $this->compression_level);
                     if (!$input_data_final) { return null; }
+                    $input_data_final = 'CHECKSUM_MD5:' . md5($input_data_final) . "#{$input_data_final}";
                     if (strlen($this->original_filename) >= 1) {
                         $base_filename = trim(pathinfo($this->original_filename, PATHINFO_FILENAME));
                         if (strlen($base_filename) >= 1) { $this->new_filename = "{$base_filename}.png"; }
@@ -457,6 +458,15 @@
                     $this->new_filename = trim(base64_decode($matches[1]));
                     $binary_data = preg_replace($pattern, '', $binary_data);
                     if (!$binary_data) { return null; }
+                }
+                $pattern = '/^CHECKSUM_MD5:([^#]+)#/';
+                $matches = array();
+                if (preg_match($pattern, $binary_data, $matches)) {
+                    $checksum_stored = trim($matches[1]);
+                    if (!strlen($checksum_stored)) { return null; }
+                    $binary_data = preg_replace($pattern, '', $binary_data);
+                    if (!$binary_data) { return null; }
+                    if ($checksum_stored != md5($binary_data)) { return null; }
                 }
                 $binary_data = gzuncompress($binary_data);
                 if ($binary_data === false) { return null; }

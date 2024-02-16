@@ -163,7 +163,7 @@
     if (!preg_match('/\.(jpg|jpeg|png|gif|bmp|wbmp|gd2|webp)$/i', $original_filename)) { die(handle_input_errors('Input file must be a JPEG, PNG, GIF, BMP, WBMP, GD2 or WEBP image!')); }
     if (!$php_stego->set_input_data(file_get_contents($input_file))) { die(handle_input_errors('Failed to load input file!')); }
     $output_file = $php_stego->convert();
-    if (!$output_file) { die(handle_input_errors('Failed to create output! Incorrect password or file provided?')); }
+    if (!$output_file) { die(handle_input_errors('Failed to create output! Incorrect password or corrupted file?')); }
     header('Content-Description: File Transfer');
     header('Content-Type: application/octet-stream');
     header('Content-Disposition: attachment; filename="' . $php_stego->get_new_filename() . '"');
