@@ -9,6 +9,27 @@
 
     //Load configuration file
     require_once(str_replace('\\', '/', __DIR__) . '/include/config.php');
+
+    /** @endcond */
+
+    /** Max upload filesize defined in `php.ini` */
+    $max_upload_size = trim(ini_get('upload_max_filesize'));
+
+    /** Max upload filesize in bytes (calculated) */
+    $max_upload_size_bytes = null;
+
+    /** @cond */
+
+    $matches = array();
+    if (preg_match('/^\s*([0-9]+)\s*([a-z]+)\s*$/i', $max_upload_size, $matches)) {
+        $max_upload_size_bytes = intval($matches[1]);
+        $size_unit = strtoupper(trim($matches[2]));
+        switch ($size_unit) {
+            case 'K': $max_upload_size_bytes *= 1024; break;
+            case 'M': $max_upload_size_bytes *= 1048576; break;
+            case 'G': $max_upload_size_bytes *= 1073741824; break;
+        }
+    }
 ?>
 <!DOCTYPE html>
 <html>
@@ -79,9 +100,17 @@
                     alert('Input file not set!');
                     return false;
                 }
+                if ($('#input_file')[0].files[0].size > <?php echo $max_upload_size_bytes; ?>) {
+                    alert('Input file size exceeds maximal upload size (<?php echo $max_upload_size; ?>)!');
+                    return false;
+                }
                 if ($('#carrier_file_container').is(':visible')) {
                     if (!$('#carrier_file').val()) {
                         alert('Carrier image not set!');
+                        return false;
+                    }
+                    if ($('#carrier_file')[0].files[0].size > <?php echo $max_upload_size_bytes; ?>) {
+                        alert('Carrier image size exceeds maximal upload size (<?php echo $max_upload_size; ?>)!');
                         return false;
                     }
                 }
@@ -125,7 +154,7 @@
                 <div class="file_input">
                     <label for="input_file">Open</label>
                     <input type="file" name="input_file" id="input_file" onchange="change_filename(this, 'input_filename');"/>
-                    <div id="input_filename">No file selected (max. <?php echo trim(ini_get('upload_max_filesize')); ?>)</div>
+                    <div id="input_filename">No file selected (max. <?php echo $max_upload_size; ?>)</div>
                 </div>
             </div>
             <div class="title">
@@ -145,7 +174,7 @@
                 <div class="file_input">
                     <label for="carrier_file">Open</label>
                     <input type="file" name="carrier_file" id="carrier_file" accept="image/*" onchange="change_filename(this, 'carrier_file_filename');"/>
-                    <div id="carrier_file_filename">No file selected (max. <?php echo trim(ini_get('upload_max_filesize')); ?>)</div>
+                    <div id="carrier_file_filename">No file selected (max. <?php echo $max_upload_size; ?>)</div>
                 </div>
             </div>
             <div class="title" id="aspect_ratio_container">
