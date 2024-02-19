@@ -30,6 +30,9 @@
             case 'G': $max_upload_size_bytes *= 1073741824; break;
         }
     }
+    if (!$max_upload_size || !$max_upload_size_bytes) {
+        die('ERROR: the maximal upload filesize must be defined and cannot be infinite!');
+    }
 ?>
 <!DOCTYPE html>
 <html>
