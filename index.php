@@ -31,7 +31,7 @@
         }
     }
     if (!$max_upload_size || !$max_upload_size_bytes) {
-        die('ERROR: the maximal upload filesize must be defined and cannot be infinite!');
+        die('ERROR: the maximal upload filesize must be defined and cannot be infinite! Please set upload_max_filesize in php.ini properly.');
     }
 ?>
 <!DOCTYPE html>
