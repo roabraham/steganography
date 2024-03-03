@@ -66,7 +66,7 @@ $(function() {
 <div class="contents">
 <div class="textblock"><p>This web application provides a simple way for effective image <em>steganography</em> designed to hide larger amount of data in an image file by replacing an entire <em>color component</em> of the <em>carrier image</em> instead of a few bits so you can hide much more data than a simple message. On the con, this method is much weaker than the traditional image steganorgaphy so you should choose a carrier image with a strong <em>dominant color palette</em> and hide the data by replacing the <em>weakest color component</em> to make this steganography less noticable. <em>If it is essential to hide your data properly, you should choose a different steganography tool</em> as this module was designed to hide large amount of data instead of hiding data deep in the carrier image to make finding the data nearly impossible.</p>
 <h2>Requirements</h2>
-<p>To install this web application, you need a <em>web server</em> supporting <b>PHP 5.4</b> or later with PHP's <b>GD extension</b>.</p>
+<p>To install this web application, you need a <em>web server</em> supporting <b>PHP 5.4</b> or later with PHP's <b>GD</b> and <b>OpenSSL extensions</b>.</p>
 <h2>Installation</h2>
 <p>Place this entire repository somewhere in your web server's document <em>root directory</em>. A subdirectory should also work.</p>
 <h2>Usage</h2>

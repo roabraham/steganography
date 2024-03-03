@@ -4,7 +4,7 @@ This web application provides a simple way for effective image _steganography_ d
 
 ## Requirements
 
-To install this web application, you need a _web server_ supporting **PHP 5.4** or later with PHP's **GD extension**.
+To install this web application, you need a _web server_ supporting **PHP 5.4** or later with PHP's **GD** and **OpenSSL extensions**.
 
 ## Installation
 
