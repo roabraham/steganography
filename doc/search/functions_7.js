@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['simple_20image_20steganography',['Simple Image Steganography',['../index.html',1,'']]],
   ['set_5fcarrier_5fdata',['set_carrier_data',['../class_p_h_p___s_t_e_g_o.html#a30ef7cbf72851b73f42562a0da8cb2be',1,'PHP_STEGO']]],
   ['set_5fcarrier_5fdimensions',['set_carrier_dimensions',['../class_p_h_p___s_t_e_g_o.html#a92c2b648ef7c178ce0b3542617757c82',1,'PHP_STEGO']]],
   ['set_5fchecksum_5fvalidation',['set_checksum_validation',['../class_p_h_p___s_t_e_g_o.html#a22ba704e567be0887eb7f8b6661bcc79',1,'PHP_STEGO']]],

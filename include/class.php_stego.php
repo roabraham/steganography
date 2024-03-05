@@ -72,6 +72,9 @@
         /** @var string: output filename (helper) */
         protected $new_filename = 'output.png';
 
+        /** @var boolean: enable or disable checksum validation */
+        protected $validate_checksum = true;
+
         /** @return binary: the raw input data you want to hide */
         public function get_input_data() { return $this->input_data; }
 
@@ -98,6 +101,9 @@
 
         /** @return string: output filename */
         public function get_new_filename() { return $this->new_filename; }
+
+        /** @return boolean: get whether the checksum is validated */
+        public function is_checksum_validated() { return $this->validate_checksum; }
 
         /**
          * Sets the input data you want to hide
@@ -235,6 +241,25 @@
                     $this->original_filename = $new_original_filename_fixed;
                 } else {
                     $this->original_filename = null;
+                }
+                return true;
+            } catch (Exception $x) {
+                echo 'Exception: ' . trim($x->getMessage());
+                return false;
+            }
+        }
+
+        /**
+         * Enable or disable checksum validation in the input file you want to decode. Although checksum validation is strongly recommended to prevent decoding manipulated or corrupted input files, in some rare cases you may want to allow errors at the decoding process (for instance: if the encoded file is an image) so you can switch it off if you really need it.
+         * @param boolean $new_checksum_validation: if set as TRUE, the checksum will be validated (recommended), validation will be disabled on FALSE
+         * @return boolean: returns TRUE on success, FALSE otherwise
+         */
+        public function set_checksum_validation($new_checksum_validation) {
+            try {
+                if ($new_checksum_validation) {
+                    $this->validate_checksum = true;
+                } else {
+                    $this->validate_checksum = false;
                 }
                 return true;
             } catch (Exception $x) {
@@ -462,11 +487,16 @@
                 $pattern = '/^CHECKSUM_MD5:([^#]+)#/';
                 $matches = array();
                 if (preg_match($pattern, $binary_data, $matches)) {
-                    $checksum_stored = trim($matches[1]);
-                    if (!strlen($checksum_stored)) { return null; }
-                    $binary_data = preg_replace($pattern, '', $binary_data);
-                    if (!$binary_data) { return null; }
-                    if ($checksum_stored != md5($binary_data)) { return null; }
+                    if ($this->validate_checksum) {
+                        $checksum_stored = trim($matches[1]);
+                        if (!strlen($checksum_stored)) { return null; }
+                        $binary_data = preg_replace($pattern, '', $binary_data);
+                        if (!$binary_data) { return null; }
+                        if ($checksum_stored != md5($binary_data)) { return null; }
+                    } else {
+                        $binary_data = preg_replace($pattern, '', $binary_data);
+                        if (!$binary_data) { return null; }
+                    }
                 }
                 $binary_data = gzuncompress($binary_data);
                 if ($binary_data === false) { return null; }
