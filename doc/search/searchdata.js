@@ -4,7 +4,7 @@ var indexSectionsWithContent =
   1: "p",
   2: "c",
   3: "_cdeghis",
-  4: "$aei",
+  4: "$adei",
   5: "ms"
 };
 
