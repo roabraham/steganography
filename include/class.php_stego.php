@@ -39,6 +39,12 @@
         /** The algorythm for the encryption */
         const ENCRYPTION_ALGORYTHM = 'aes-256-cbc';
 
+        /** Cipher mode for encryption (compatibility mode) */
+        const ENCRYPTION_CIPHER = 'CBC';
+
+        /** Maximal encryption key length */
+        const MAX_KEY_LENGTH = 32;
+
         /** The prefix of the temporary image file names */
         const IMAGE_TEMPNAME = 'php_stego_image';
 
@@ -75,6 +81,9 @@
         /** @var boolean: enable or disable checksum validation */
         protected $validate_checksum = true;
 
+        /** @var boolean: use pure PHP code for encryption and decryption to ensure compatibility across different PHP versions */
+        protected $compatibility_mode = false;
+
         /** @return binary: the raw input data you want to hide */
         public function get_input_data() { return $this->input_data; }
 
@@ -104,6 +113,9 @@
 
         /** @return boolean: get whether the checksum is validated */
         public function is_checksum_validated() { return $this->validate_checksum; }
+
+        /** @return boolean: get whether compatibility mode is used for encryption and decryption */
+        public function compatibility_mode_used() { return $this->compatibility_mode; }
 
         /**
          * Sets the input data you want to hide
@@ -251,7 +263,7 @@
 
         /**
          * Enable or disable checksum validation in the input file you want to decode. Although checksum validation is strongly recommended to prevent decoding manipulated or corrupted input files, in some rare cases you may want to allow errors at the decoding process (for instance: if the encoded file is an image) so you can switch it off if you really need it.
-         * @param boolean $new_checksum_validation: if set as TRUE, the checksum will be validated (recommended), validation will be disabled on FALSE
+         * @param boolean $new_checksum_validation: if set TRUE, the checksum will be validated (recommended), validation will be disabled on FALSE
          * @return boolean: returns TRUE on success, FALSE otherwise
          */
         public function set_checksum_validation($new_checksum_validation) {
@@ -269,19 +281,60 @@
         }
 
         /**
+         * Enable or disable compatibility mode for encryption and decryption to ensure compatibility across different PHP versions (slow)
+         * @param boolean $use_compatibility_mode: if set TRUE, pure PHP code will be used for encryption and decryption (not depending on OpenSSL extension)
+         * @return boolean: returns TRUE on success, FALSE otherwise
+         */
+        public function set_compatibility_mode($use_compatibility_mode){
+            try {
+                if ($use_compatibility_mode) {
+                    $this->compatibility_mode = true;
+                } else {
+                    $this->compatibility_mode = false;
+                }
+                return true;
+            } catch (Exception $x) {
+                echo 'Exception: ' . trim($x->getMessage());
+                return false;
+            }
+        }
+
+        /**
          * Encrypts the input data with the specified key (helper)
          * @param string $input_data: the input data to encrypt
          * @param string $encryption_key: encrypt input data with this key
+         * @param boolean $compatibility_mode: if set TRUE, compatibility mode will be used for encryption (optional, slow)
          * @return string: the encrypted data on success, NULL otherwise
          */
-        public static function encrypt_data($input_data, $encryption_key) {
+        public static function encrypt_data($input_data, $encryption_key, $compatibility_mode = false) {
             try {
+                //Check basic encryption parameters
                 if (!$input_data) { return null; }
                 $encryption_key_fixed = trim($encryption_key);
                 if (!(strlen($encryption_key_fixed) >= 1)) { return null; }
+                if (strlen($encryption_key_fixed) > self::MAX_KEY_LENGTH) { return null; }
+                $input_data_modified = "ENCRYPTED#{$input_data}";
+                if ($compatibility_mode) {
+                    //Use phpAES for encryption (compatibility mode)
+                    $iv_characters = '0123456789abcdef';
+                    $iv_characters_length = strlen($iv_characters);
+                    $initialization_vector = '';
+                    for ($i = 0; $i < 16; ++$i) {
+                        $iv_character_index = round(rand(0, $iv_characters_length - 1));
+                        if (($iv_character_index >= 0) && ($iv_character_index <= $iv_characters_length - 1)) {
+                            $initialization_vector .= trim(substr($iv_characters, $iv_character_index, 1));
+                        }
+                    }
+                    if (strlen($initialization_vector) != 16) { return null; }
+                    $encryption_key_fixed = str_pad($encryption_key_fixed, self::MAX_KEY_LENGTH, '0', STR_PAD_RIGHT);
+                    require_once(str_replace('\\', '/', __DIR__) . '/class.aes.php');
+                    $cipher = new AES($encryption_key_fixed, self::ENCRYPTION_CIPHER, $initialization_vector);
+                    $output_data = $cipher->encrypt($input_data_modified);
+                    if (strlen($output_data) >= 1) { return "{$initialization_vector}{$output_data}"; }
+                    return null;
+                }
                 $initialization_vector = openssl_random_pseudo_bytes(openssl_cipher_iv_length(self::ENCRYPTION_ALGORYTHM));
                 if (!$initialization_vector) { return null; }
-                $input_data_modified = "ENCRYPTED#{$input_data}";
                 $output_data = openssl_encrypt($input_data_modified, self::ENCRYPTION_ALGORYTHM, $encryption_key_fixed, OPENSSL_RAW_DATA, $initialization_vector);
                 if ($output_data === false) { return null; }
                 return "{$initialization_vector}{$output_data}";
@@ -295,13 +348,31 @@
          * Decrypts the input data with the specified key (helper)
          * @param string $input_data: the input data to decrypt
          * @param string $encryption_key: decrypt input data with this key
+         * @param boolean $compatibility_mode: if set TRUE, compatibility mode will be used for decryption (optional, slow)
          * @return string: the decrypted data on success, NULL otherwise
          */
-        public static function decrypt_data($input_data, $encryption_key) {
+        public static function decrypt_data($input_data, $encryption_key, $compatibility_mode = false) {
             try {
                 if (!$input_data) { return null; }
                 $encryption_key_fixed = trim($encryption_key);
                 if (!(strlen($encryption_key_fixed) >= 1)) { return null; }
+                if (strlen($encryption_key_fixed) > self::MAX_KEY_LENGTH) { return null; }
+                if ($compatibility_mode) {
+                    $encryption_key_fixed = str_pad($encryption_key_fixed, self::MAX_KEY_LENGTH, '0', STR_PAD_RIGHT);
+                    $initialization_vector = trim(substr($input_data, 0, 16));
+                    if (strlen($initialization_vector) != 16) { return null; }
+                    if (preg_match('/[^0123456789abcdef]/', $initialization_vector)) { return null; }
+                    $input_data_original = substr($input_data, 16);
+                    if (!$input_data_original) { return null; }
+                    require_once(str_replace('\\', '/', __DIR__) . '/class.aes.php');
+                    $cipher = new AES($encryption_key_fixed, self::ENCRYPTION_CIPHER, $initialization_vector);
+                    $output_data = $cipher->decrypt($input_data_original);
+                    if (!(strlen($output_data) >= 1)) { return null; }
+                    if (!preg_match('/^ENCRYPTED#/', $output_data)) { return null; }
+                    $output_data = preg_replace('/^ENCRYPTED#/', '', $output_data);
+                    if (!$output_data) { return null; }
+                    return $output_data;
+                }
                 $initialization_vector_length = strlen(openssl_random_pseudo_bytes(openssl_cipher_iv_length(self::ENCRYPTION_ALGORYTHM)));
                 if (!$initialization_vector_length) { return null; }
                 $initialization_vector = substr($input_data, 0, $initialization_vector_length);
@@ -338,7 +409,7 @@
                         if (strlen($base_filename) >= 1) { $this->new_filename = "{$base_filename}.png"; }
                         $input_data_final = 'ORIGINAL_FILENAME:' . base64_encode($this->original_filename) . "#{$input_data_final}";
                     }
-                    $input_data_final = self::encrypt_data($input_data_final, $this->encryption_key);
+                    $input_data_final = self::encrypt_data($input_data_final, $this->encryption_key, $this->compatibility_mode);
                     if (!$input_data_final) { return null; }
                     $data_base64 = base64_encode($input_data_final) . '#';
                     $data_length = strlen($data_base64);
@@ -474,7 +545,7 @@
                 if (!$data_length) { return null; }
                 $binary_data = base64_decode($data_base64);
                 if ($binary_data === false) { return null; }
-                $binary_data = self::decrypt_data($binary_data, $this->encryption_key);
+                $binary_data = self::decrypt_data($binary_data, $this->encryption_key, $this->compatibility_mode);
                 if (!$binary_data) { return null; }
                 $this->new_filename = 'output.dat';
                 $pattern = '/^ORIGINAL_FILENAME:([^#]+)#/';

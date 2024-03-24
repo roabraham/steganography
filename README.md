@@ -46,7 +46,7 @@ For further information on how to use the class, check `include/convert.php` scr
 
 This project consists of **multiple components**, each with its **own license**. When using this project, carefully choose based on the license of the component you intend to use:
 
-- The **core PHP application** (located in `include` directory) is licensed under a **modified MIT license** (©2024 Robert Abraham).
+- The **core PHP application** (located in `include` directory) is licensed under a **modified MIT license** (©2024 Robert Abraham) and **phpAES (MIT) license** (for compatibility module).
 
 - The **Graphical User Interface (GUI)** of the *web application* (located in this directory excluding the `include` subdirectory) was built using standard [jQuery](https://jquery.com/) (located in `javascript` subdirectory) and is licensed under **MIT**.
 

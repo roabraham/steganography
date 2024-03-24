@@ -91,6 +91,8 @@ Variables</h2></td></tr>
 <tr class="separator:a99204040b0413193aa45b43e771c89a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9a4e30766e452f0d2feaecd666787ca1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="convert_8php.html#a9a4e30766e452f0d2feaecd666787ca1">$compression_level</a> = isset($_REQUEST['compression_level']) ? $_REQUEST['compression_level'] : null</td></tr>
 <tr class="separator:a9a4e30766e452f0d2feaecd666787ca1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6dee6fa7834902dfd71f68fd7c0863c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="convert_8php.html#ae6dee6fa7834902dfd71f68fd7c0863c">$compatibility_mode</a> = isset($_REQUEST['compatibility_mode']) ? $_REQUEST['compatibility_mode'] : false</td></tr>
+<tr class="separator:ae6dee6fa7834902dfd71f68fd7c0863c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af11e0521098d09eafc1df4d25f789df5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="convert_8php.html#af11e0521098d09eafc1df4d25f789df5">$process_timeout</a> = isset($_REQUEST['process_timeout']) ? max(intval(trim($_REQUEST['process_timeout'])), 0) : null</td></tr>
 <tr class="separator:af11e0521098d09eafc1df4d25f789df5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9ec97c8d1739b568fe83c017226fc949"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="convert_8php.html#a9ec97c8d1739b568fe83c017226fc949">$process_memory_limit</a> = isset($_REQUEST['process_memory_limit']) ? trim($_REQUEST['process_memory_limit']) : null</td></tr>
@@ -124,7 +126,7 @@ Variables</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>string: the HTML code of the error page </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00057">57</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00060">60</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
 
 </div>
 </div>
@@ -197,6 +199,23 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="ae6dee6fa7834902dfd71f68fd7c0863c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae6dee6fa7834902dfd71f68fd7c0863c">&#9670;&nbsp;</a></span>$compatibility_mode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">$compatibility_mode = isset($_REQUEST['compatibility_mode']) ? $_REQUEST['compatibility_mode'] : false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Use pure PHP code for encryption and decryption to ensure compatibility across different PHP versions (slow) </p>
+
+<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00032">32</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
+
+</div>
+</div>
 <a id="a9a4e30766e452f0d2feaecd666787ca1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9a4e30766e452f0d2feaecd666787ca1">&#9670;&nbsp;</a></span>$compression_level</h2>
 
@@ -261,7 +280,7 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 <p>Memory limit for the conversion process (overrides <code>php.ini</code>) </p>
 
-<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00035">35</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00038">38</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
 
 </div>
 </div>
@@ -278,7 +297,7 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 <p>Time limit for the conversion process in secods (overrides <code>php.ini</code>) </p>
 
-<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00032">32</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="convert_8php_source.html#l00035">35</a> of file <a class="el" href="convert_8php_source.html">convert.php</a>.</p>
 
 </div>
 </div>

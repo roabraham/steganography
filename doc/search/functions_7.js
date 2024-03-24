@@ -3,6 +3,7 @@ var searchData=
   ['set_5fcarrier_5fdata',['set_carrier_data',['../class_p_h_p___s_t_e_g_o.html#a30ef7cbf72851b73f42562a0da8cb2be',1,'PHP_STEGO']]],
   ['set_5fcarrier_5fdimensions',['set_carrier_dimensions',['../class_p_h_p___s_t_e_g_o.html#a92c2b648ef7c178ce0b3542617757c82',1,'PHP_STEGO']]],
   ['set_5fchecksum_5fvalidation',['set_checksum_validation',['../class_p_h_p___s_t_e_g_o.html#a22ba704e567be0887eb7f8b6661bcc79',1,'PHP_STEGO']]],
+  ['set_5fcompatibility_5fmode',['set_compatibility_mode',['../class_p_h_p___s_t_e_g_o.html#a7381bc5370404369fd5a6759b6456648',1,'PHP_STEGO']]],
   ['set_5fcompression_5flevel',['set_compression_level',['../class_p_h_p___s_t_e_g_o.html#abd96f4ab72ff15c01b47523caea59b95',1,'PHP_STEGO']]],
   ['set_5fencoding_5fdirection',['set_encoding_direction',['../class_p_h_p___s_t_e_g_o.html#a6642692a96412767c349f302dca09c6d',1,'PHP_STEGO']]],
   ['set_5fencryption_5fkey',['set_encryption_key',['../class_p_h_p___s_t_e_g_o.html#ae75b05d5cd20408c8fc8609e9ba13864',1,'PHP_STEGO']]],

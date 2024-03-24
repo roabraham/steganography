@@ -28,6 +28,9 @@
     /** Compress input data with this level of compression */
     $compression_level = isset($_REQUEST['compression_level']) ? $_REQUEST['compression_level'] : null;
 
+    /** Use pure PHP code for encryption and decryption to ensure compatibility across different PHP versions (slow) */
+    $compatibility_mode = isset($_REQUEST['compatibility_mode']) ? $_REQUEST['compatibility_mode'] : false;
+
     /** Time limit for the conversion process in secods (overrides `php.ini`) */
     $process_timeout = isset($_REQUEST['process_timeout']) ? max(intval(trim($_REQUEST['process_timeout'])), 0) : null;
 
@@ -72,7 +75,7 @@
             $result_value .= "<h1>ERROR: {$error_message_fixed}</h1>\n";
             $result_value .= "<div class=\"url\">\n";
             $server_parameters = ALLOW_OVERRIDE_PHP_SETTINGS ? '&amp;process_timeout=PROCESS_TIMEOUT&amp;process_memory_limit=PROCESS_MEMORY_LIMIT' : '';
-            $result_value .= '<p><strong>Direct usage</strong>:&nbsp;' . basename(__FILE__) . "?input_file=INPUT_FILEPATH&amp;bin_to_image=BIN_TO_IMAGE&amp;carrier_file=CARRIER_FILEPATH&amp;aspect_ratio=ASPECT_RATIO&amp;color_component=COLOR_COMPONENT&amp;encryption_password=ENCRYPTION_PASSWORD&amp;compression_level=COMPRESSION_LEVEL{$server_parameters}</p>\n";
+            $result_value .= '<p><strong>Direct usage</strong>:&nbsp;' . basename(__FILE__) . "?input_file=INPUT_FILEPATH&amp;bin_to_image=BIN_TO_IMAGE&amp;carrier_file=CARRIER_FILEPATH&amp;aspect_ratio=ASPECT_RATIO&amp;color_component=COLOR_COMPONENT&amp;encryption_password=ENCRYPTION_PASSWORD&amp;compression_level=COMPRESSION_LEVEL&amp;compatibility_mode=COMPATIBILITY_MODE{$server_parameters}</p>\n";
             $result_value .= "</div>\n";
             $result_value .= "<p>where</p>\n";
             $result_value .= "<ul>\n";
@@ -83,6 +86,7 @@
             $result_value .= "<li><strong>COLOR_COMPONENT</strong>: the color component you want to replace with the binary data (RED|GREEN|BLUE|ALPHA, default: RED)</li>\n";
             $result_value .= "<li><strong>ENCRYPTION_PASSWORD</strong>: the encryption key for the data to hide</li>\n";
             $result_value .= "<li><strong>COMPRESSION_LEVEL</strong>: compress input data with this level of compression (default: 6)</li>\n";
+            $result_value .= "<li><strong>COMPATIBILITY_MODE</strong>: Use pure PHP code for encryption and decryption to ensure compatibility across different PHP versions (default: 0, slow)</li>\n";
             if (ALLOW_OVERRIDE_PHP_SETTINGS) {
                 $result_value .= "<li><strong>PROCESS_TIMEOUT</strong>: Time limit for the conversion process in secods (overrides php.ini, optional)</li>\n";
                 $result_value .= "<li><strong>PROCESS_MEMORY_LIMIT</strong>: Memory limit for the conversion process (overrides php.ini, optional)</li>\n";
@@ -121,6 +125,7 @@
     require_once(str_replace('\\', '/', __DIR__) . '/class.php_stego.php');
     $php_stego = new PHP_STEGO();
     $php_stego->set_encoding_direction($bin_to_image);
+    $php_stego->set_compatibility_mode($compatibility_mode);
     if (!$php_stego->set_encryption_key($encryption_password)) {
         die(handle_input_errors('Could not set encryption key!'));
     }

@@ -212,6 +212,12 @@
                 <div class="radio_button"><input type="radio" name="compression_level" value="8" required="required" /><span>8</span></div>
                 <div class="radio_button"><input type="radio" name="compression_level" value="9" required="required" /><span>9 (maximum compression)</span></div>
             </div>
+            <div class="title">
+                <h2>Compatibility mode*</h2>
+                <p class="description">Use pure PHP code for encryption and decryption to ensure compatibility across different PHP versions (slow; not recommended for larger files). You may need this option when you want to store encrypted files for a long time.</p>
+                <div class="radio_button"><input type="radio" name="compatibility_mode" value="0" required="required" checked /><span>No (use OpenSSL, default)</span></div>
+                <div class="radio_button"><input type="radio" name="compatibility_mode" value="1" required="required" /><span>Yes (use phpAES instead)</span></div>
+            </div>
             <?php if (ALLOW_OVERRIDE_PHP_SETTINGS): ?>
                 <div class="title">
                     <h2>Process timeout (advanced)</h2>
