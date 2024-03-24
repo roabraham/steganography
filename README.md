@@ -16,7 +16,7 @@ Once the web application is installed on your web server, navigate to `index.php
 
 ## Embedding PHP steganography class in a different web application
 
-To _embed PHP steganography class_ in a separate web application, place `include/class.php_stego.php` file in your web application and include the class in the corresponding script as you can see bellow:
+To _embed PHP steganography class_ in a separate web application, place `include/class.php_stego.php` and `include/class.aes.php` files in your web application and include the class in the corresponding script as you can see bellow:
 
 ```php
 require_once 'class.php_stego.php';
