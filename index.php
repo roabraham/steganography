@@ -38,7 +38,7 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>Convert File</title>
+        <title>Simple Image Steganography</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="style/main.css" type="text/css" />
         <script type="text/javascript" src="javascript/jquery.min.js"></script>
