@@ -31,6 +31,9 @@
     /** Use pure PHP code for encryption and decryption to ensure compatibility across different PHP versions (slow) */
     $compatibility_mode = isset($_REQUEST['compatibility_mode']) ? $_REQUEST['compatibility_mode'] : false;
 
+    /** Use OCR-friendly printable code instead of image format */
+    $printable_code = isset($_REQUEST['printable_code']) ? $_REQUEST['printable_code'] : false;
+
     /** Time limit for the conversion process in secods (overrides `php.ini`) */
     $process_timeout = isset($_REQUEST['process_timeout']) ? max(intval(trim($_REQUEST['process_timeout'])), 0) : null;
 
@@ -126,6 +129,7 @@
     $php_stego = new PHP_STEGO();
     $php_stego->set_encoding_direction($bin_to_image);
     $php_stego->set_compatibility_mode($compatibility_mode);
+    $php_stego->set_printable_code($printable_code);
     if (!$php_stego->set_encryption_key($encryption_password)) {
         die(handle_input_errors('Could not set encryption key!'));
     }
@@ -154,7 +158,11 @@
         $php_stego->set_compression_level($compression_level);
         $output_file = $php_stego->convert();
         if (!$output_file) { die(handle_input_errors('Failed to create image from binary data!')); }
-        header('Content-Type: image/png');
+        if ($printable_code) {
+            header('Content-Type: text/plain');
+        } else {
+            header('Content-Type: image/png');
+        }
         header('Content-Description: File Transfer');
         header('Content-Disposition: attachment; filename="' . $php_stego->get_new_filename() . '"');
         header('Expires: 0');
@@ -165,7 +173,9 @@
         exit;
     }
     //Create binary data from input file
-    if (!preg_match('/\.(jpg|jpeg|png|gif|bmp|wbmp|gd2|webp)$/i', $original_filename)) { die(handle_input_errors('Input file must be a JPEG, PNG, GIF, BMP, WBMP, GD2 or WEBP image!')); }
+    if (!$printable_code) {
+        if (!preg_match('/\.(jpg|jpeg|png|gif|bmp|wbmp|gd2|webp)$/i', $original_filename)) { die(handle_input_errors('Input file must be a JPEG, PNG, GIF, BMP, WBMP, GD2 or WEBP image!')); }
+    }
     if (!$php_stego->set_input_data(file_get_contents($input_file))) { die(handle_input_errors('Failed to load input file!')); }
     if (DISABLE_CHECKSUM_VALIDATION) { $php_stego->set_checksum_validation(false); }
     $output_file = $php_stego->convert();

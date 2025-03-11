@@ -84,6 +84,9 @@
         /** @var boolean: use pure PHP code for encryption and decryption to ensure compatibility across different PHP versions */
         protected $compatibility_mode = false;
 
+        /** @var boolean: if set TRUE, OCR-friendly printable text will be used instead of an image */
+        protected $printable_code = false;
+
         /** @return binary: the raw input data you want to hide */
         public function get_input_data() { return $this->input_data; }
 
@@ -116,6 +119,9 @@
 
         /** @return boolean: get whether compatibility mode is used for encryption and decryption */
         public function compatibility_mode_used() { return $this->compatibility_mode; }
+
+        /** @return boolean: get whether OCR-friendly printable code is used instead of an image */
+        public function is_printable_code_used() { return $this->printable_code; }
 
         /**
          * Sets the input data you want to hide
@@ -285,12 +291,31 @@
          * @param boolean $use_compatibility_mode: if set TRUE, pure PHP code will be used for encryption and decryption (not depending on OpenSSL extension)
          * @return boolean: returns TRUE on success, FALSE otherwise
          */
-        public function set_compatibility_mode($use_compatibility_mode){
+        public function set_compatibility_mode($use_compatibility_mode) {
             try {
                 if ($use_compatibility_mode) {
                     $this->compatibility_mode = true;
                 } else {
                     $this->compatibility_mode = false;
+                }
+                return true;
+            } catch (Exception $x) {
+                echo 'Exception: ' . trim($x->getMessage());
+                return false;
+            }
+        }
+
+        /**
+         * Enable or disable image conversion to OCR-friendly printable code
+         * @param boolean $use_printable_code: if set TRUE, the image will be converted to an OCR-friendly printable code
+         * @return boolean: returns TRUE on success, FALSE otherwise
+         */
+        public function set_printable_code($use_printable_code) {
+            try {
+                if ($use_printable_code) {
+                    $this->printable_code = true;
+                } else {
+                    $this->printable_code = false;
                 }
                 return true;
             } catch (Exception $x) {
@@ -392,6 +417,71 @@
         }
 
         /**
+         * Encode the specified input string in hexadecimal form (with fallback for old PHP versions)
+         * @param string $input_string: subject input string
+         * @return string: returns the string on success, NULL otherwise
+         */
+        public static function hex2bin_fallback($input_data) {
+            try {
+                if (!$input_data) { return null; }
+                $input_length = strlen($input_data);
+                if (($input_length >= 2) == false) { return null; }
+                if (($input_length % 2) != 0) { return null; }
+                if (function_exists('hex2bin')) { return hex2bin($input_data); }
+                $result_value = '';
+                for ($i = 0; $i < $input_length; $i += 2) {
+                    $result_value .= chr(hexdec(substr($input_data, $i, 2)));
+                }
+                return $result_value;
+            } catch (Exception $x) {
+                echo 'Exception: ' . trim($x->getMessage());
+                return null;
+            }
+        }
+
+        /**
+         * Convert the specified input data to an OCR-friendly printable code
+         * @param string $input_data: the input data to convert
+         * @return string: the OCR-friendly printable code on success, NULL otherwise
+         */
+        public static function convert_to_printable($input_data) {
+            try {
+                if (!$input_data) { return null; }
+                $input_data_hexadecimal = strtoupper(trim(bin2hex($input_data)));
+                if (!$input_data_hexadecimal) { return null; }
+                $input_data_printable = str_replace(
+                    array('0', '1', '4', '8', 'A', 'B', 'E', 'F'),
+                    array('O', 'I', 'G', 'X', 'L', 'Y', 'Z', 'N'),
+                    $input_data_hexadecimal);
+                if (!$input_data_printable) { return null; }
+                return $input_data_printable;
+            } catch (Exception $x) {
+                echo 'Exception: ' . trim($x->getMessage());
+                return null;
+            }
+        }
+
+        /**
+         * Convert the specified OCR-friendly printable code back to binary data
+         * @param string $input_data: the input data to convert
+         * @return string: the original binary data on success, NULL otherwise
+         */
+        public static function convert_from_printable($input_data) {
+            try {
+                if (!$input_data) { return null; }
+                $input_data_hexadecimal = str_replace(
+                    array('O', 'I', 'G', 'X', 'L', 'Y', 'Z', 'N'),
+                    array('0', '1', '4', '8', 'A', 'B', 'E', 'F'),
+                    strtoupper(trim($input_data)));
+                if (!$input_data_hexadecimal) { return null; }
+                return self::hex2bin_fallback($input_data_hexadecimal);
+            } catch (Exception $x) {
+                echo 'Exception: ' . trim($x->getMessage());
+                return null;
+            }
+        }
+
+        /**
          * Encoding or decoding the raw input data depending on the direction of the steganography process
          * @return binary: the encoded/decoded data on success, NULL otherwise
          */
@@ -406,7 +496,13 @@
                     $input_data_final = 'CHECKSUM_MD5:' . md5($input_data_final) . "#{$input_data_final}";
                     if (strlen($this->original_filename) >= 1) {
                         $base_filename = trim(pathinfo($this->original_filename, PATHINFO_FILENAME));
-                        if (strlen($base_filename) >= 1) { $this->new_filename = "{$base_filename}.png"; }
+                        if (strlen($base_filename) >= 1) {
+                            if ($this->printable_code) {
+                                $this->new_filename = "{$base_filename}.txt";
+                            } else {
+                                $this->new_filename = "{$base_filename}.png";
+                            }
+                        }
                         $input_data_final = 'ORIGINAL_FILENAME:' . base64_encode($this->original_filename) . "#{$input_data_final}";
                     }
                     $input_data_final = self::encrypt_data($input_data_final, $this->encryption_key, $this->compatibility_mode);
@@ -498,10 +594,20 @@
                     unlink($output_file);
                     imagedestroy($image_data);
                     if ($output_image === false) { return null; }
+                    if ($this->printable_code) {
+                        return self::convert_to_printable($output_image);
+                    }
                     return $output_image;
                 }
                 //Create binary data from input
-                $image_data = imagecreatefromstring($this->input_data);
+                $image_data = null;
+                if ($this->printable_code) {
+                    $image_data = self::convert_from_printable($this->input_data);
+                    if (!$image_data) { return null; }
+                    $image_data = imagecreatefromstring($image_data);
+                } else {
+                    $image_data = imagecreatefromstring($this->input_data);
+                }
                 if ($image_data === false) { return null; }
                 $image_width = imagesx($image_data);
                 if (!$image_width) { return null; }

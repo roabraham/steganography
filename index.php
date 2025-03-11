@@ -61,11 +61,13 @@
                     $('#replaced_color_component_description').hide();
                     $('#compression_level_container').show();
                     $("[name='compression_level']").attr('required', 'required');
+                    $('#printable_output_description').show();
+                    $('#printable_input_description').hide();
                     return;
                 }
                 $('#input_for_encoding').hide();
                 $('#input_for_decoding').show();
-                $('#input_file').attr('accept', 'image/*');
+                $('#input_file').attr('accept', 'image/*, .txt');
                 $('#encryption_password_title').hide();
                 $('#decryption_password_title').show();
                 $('#encryption_password_description').hide();
@@ -79,6 +81,8 @@
                 $('#replaced_color_component_description').show();
                 $("[name='compression_level']").removeAttr('required');
                 $('#compression_level_container').hide();
+                $('#printable_output_description').hide();
+                $('#printable_input_description').show();
             }
             function validate_password() {
                 var encryption_password = $('#encryption_password').val().trim();
@@ -140,7 +144,7 @@
                 <p>This application provides a simple module for effective image steganography designed to hide larger amount of data in an image file.</p>
             </div>
             <div class="title">
-                <h2>Convert Input File*</h2>
+                <h2>Convert Input File</h2>
                 <div class="radio_button">
                     <input type="radio" name="bin_to_image" value="1" required="required" checked onclick="set_encoding_direction(true);" /><span>to image</span>
                     <div class="description">Create image file from any binary data.</div>
@@ -181,7 +185,7 @@
                 </div>
             </div>
             <div class="title" id="aspect_ratio_container">
-                <h2>Output aspect ratio*</h2>
+                <h2>Output aspect ratio</h2>
                 <p class="description">Output image resolution will be adjusted automatically to fit data size.</p>
                 <div class="radio_button"><input type="radio" name="aspect_ratio" value="AUTO" required="required" checked /><span>Auto</span></div>
                 <div class="radio_button"><input type="radio" name="aspect_ratio" value="SQUARE" required="required" /><span>Square (1:1)</span></div>
@@ -190,7 +194,7 @@
             </div>
             <div class="title">
                 <div id="replace_color_component_description">
-                    <h2>Replace color component*</h2>
+                    <h2>Replace color component</h2>
                     <p class="description">This color component will be replaced by the data you want to hide in the RGB palette (this may make the output image grainy if your carrier image is not monochromatic or there is no significantly dominant color in the carrier image making the steganography more noticable).</p>
                 </div>
                 <h2 id="replaced_color_component_description">Replaced color component*</h2>
@@ -200,7 +204,7 @@
                 <div class="radio_button"><input type="radio" name="color_component" value="ALPHA" required="required" /><span>alpha channel (transparency)</span></div>
             </div>
             <div class="title" id="compression_level_container">
-                <h2>Compression level*</h2>
+                <h2>Compression level</h2>
                 <p class="description">The compression level of the output</p>
                 <div class="radio_button"><input type="radio" name="compression_level" value="1" required="required" /><span>1 (minimum compression)</span></div>
                 <div class="radio_button"><input type="radio" name="compression_level" value="2" required="required" /><span>2</span></div>
@@ -213,10 +217,17 @@
                 <div class="radio_button"><input type="radio" name="compression_level" value="9" required="required" /><span>9 (maximum compression)</span></div>
             </div>
             <div class="title">
-                <h2>Compatibility mode*</h2>
+                <h2>Compatibility mode</h2>
                 <p class="description">Use pure PHP code for encryption and decryption to ensure compatibility across different PHP versions (slow; not recommended for larger files). You may need this option when you want to store encrypted files for a long time.</p>
                 <div class="radio_button"><input type="radio" name="compatibility_mode" value="0" required="required" checked /><span>No (use OpenSSL, default)</span></div>
                 <div class="radio_button"><input type="radio" name="compatibility_mode" value="1" required="required" /><span>Yes (use phpAES instead)</span></div>
+            </div>
+            <div class="title">
+                <h2>Printable code (experimental)</h2>
+                <p class="description" id="printable_output_description">Convert output image to OCR-friendly printable code to be used with text recognition services (generates printable text instead of an image)</p>
+                <p class="description" id="printable_input_description">Convert OCR-friendly printable input to image before processing</p>
+                <div class="radio_button"><input type="radio" name="printable_code" value="0" required="required" checked /><span>No</span></div>
+                <div class="radio_button"><input type="radio" name="printable_code" value="1" required="required" /><span>Yes</span></div>
             </div>
             <?php if (ALLOW_OVERRIDE_PHP_SETTINGS): ?>
                 <div class="title">
