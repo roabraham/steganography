@@ -428,11 +428,7 @@
                 if (($input_length >= 2) == false) { return null; }
                 if (($input_length % 2) != 0) { return null; }
                 if (function_exists('hex2bin')) { return hex2bin($input_data); }
-                $result_value = '';
-                for ($i = 0; $i < $input_length; $i += 2) {
-                    $result_value .= chr(hexdec(substr($input_data, $i, 2)));
-                }
-                return $result_value;
+                return pack('H*', $input_data);
             } catch (Exception $x) {
                 echo 'Exception: ' . trim($x->getMessage());
                 return null;
@@ -507,8 +503,8 @@
                     }
                     $input_data_final = self::encrypt_data($input_data_final, $this->encryption_key, $this->compatibility_mode);
                     if (!$input_data_final) { return null; }
-                    $data_base64 = base64_encode($input_data_final) . '#';
-                    $data_length = strlen($data_base64);
+                    $data_hex = '!' . bin2hex($input_data_final) . '#';
+                    $data_length = strlen($data_hex);
                     if (!$data_length) { return null; }
                     $image_data = false;
                     $image_width = null;
@@ -566,7 +562,7 @@
                         if ($image_data === false) { return null; }
                     }
                     for ($i = 0; $i < $data_length; ++$i) {
-                        $new_color_component = ord(substr($data_base64, $i, 1));
+                        $new_color_component = ord(substr($data_hex, $i, 1));
                         $x = $i % $image_width;
                         $y = floor($i / $image_width);
                         $new_color = null;
@@ -621,7 +617,7 @@
                     imagedestroy($image_data);
                     $image_data = $new_image_data;
                 }
-                $data_base64 = '';
+                $data_encoded = '';
                 for ($y = 0; $y < $image_height; ++$y) {
                     for ($x = 0; $x < $image_width; ++$x) {
                         $color = imagecolorat($image_data, $x, $y);
@@ -643,14 +639,20 @@
                             default: return null;
                         }
                         if ($current_byte == '#') { break 2; }
-                        $data_base64 .= $current_byte;
+                        $data_encoded .= $current_byte;
                     }
                 }
                 imagedestroy($image_data);
-                $data_length = strlen($data_base64);
+                $data_length = strlen($data_encoded);
                 if (!$data_length) { return null; }
-                $binary_data = base64_decode($data_base64);
-                if ($binary_data === false) { return null; }
+                $binary_data = null;
+                if (substr($data_encoded, 0, 1) == '!') {
+                    $data_encoded = substr($data_encoded, 1);
+                    $binary_data = self::hex2bin_fallback($data_encoded);
+                } else {
+                    $binary_data = base64_decode($data_encoded);
+                }
+                if (!$binary_data) { return null; }
                 $binary_data = self::decrypt_data($binary_data, $this->encryption_key, $this->compatibility_mode);
                 if (!$binary_data) { return null; }
                 $this->new_filename = 'output.dat';
