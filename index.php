@@ -131,6 +131,14 @@
                 $('#'+target_id).html(filename);
                 return true;
             }
+            function handle_label_keypress(event, input_id) {
+                var evt = event ? event : window.event;
+                var key = evt.keyCode ? evt.keyCode : evt.which;
+                if ((key == 13) || (key == 32)) {
+                    event.preventDefault();
+                    document.getElementById(input_id).click();
+                }
+            }
             window.onload = function () {
                 set_encoding_direction(true);
             };
@@ -159,8 +167,8 @@
                 <p class="description" id="input_for_encoding">The binary data you want to hide in a carrier image file</p>
                 <p class="description" id="input_for_decoding">The image file you want to extract the hidden data from</p>
                 <div class="file_input">
-                    <label for="input_file">Open</label>
-                    <input type="file" name="input_file" id="input_file" onchange="change_filename(this, 'input_filename');"/>
+                    <label for="input_file" id="label_input_file" tabindex="0" role="button" aria-controls="input_file" aria-label="Select input file" onkeydown="handle_label_keypress(event, 'input_file')">Open</label>
+                    <input type="file" name="input_file" id="input_file" aria-labelledby="label_input_file" onchange="change_filename(this, 'input_filename');"/>
                     <div id="input_filename">No file selected (max. <?php echo $max_upload_size; ?>)</div>
                 </div>
             </div>
@@ -179,8 +187,8 @@
                 <h2>Carrier image*</h2>
                 <p class="description">Hide the input file in this (carrier) image.</p>
                 <div class="file_input">
-                    <label for="carrier_file">Open</label>
-                    <input type="file" name="carrier_file" id="carrier_file" accept="image/*" onchange="change_filename(this, 'carrier_file_filename');"/>
+                    <label for="carrier_file" id="label_carrier_file" tabindex="0" role="button" aria-controls="carrier_file" aria-label="Select carrier file" onkeydown="handle_label_keypress(event, 'carrier_file')">Open</label>
+                    <input type="file" name="carrier_file" id="carrier_file" accept="image/*" aria-labelledby="label_carrier_file" onchange="change_filename(this, 'carrier_file_filename');"/>
                     <div id="carrier_file_filename">No file selected (max. <?php echo $max_upload_size; ?>)</div>
                 </div>
             </div>

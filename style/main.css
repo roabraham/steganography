@@ -63,7 +63,10 @@ input[type=password]{
     border: 1px solid #A0A0A0;
     padding: 7px;
 }
-input[type=file]{ display: none; }
+input[type=file]{
+    position: absolute;
+    left: -9999px;
+}
 input[type=submit]{
     border: 1px solid #2D68A2;
     color: #FFFFFF;

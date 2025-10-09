@@ -71,10 +71,20 @@
             $result_value .= "<title>Error</title>\n";
             $result_value .= "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n";
             $result_value .= "<link rel=\"stylesheet\" href=\"../style/main.css\" type=\"text/css\"/>\n";
+            $result_value .= "<script type=\"text/javascript\">\n";
+            $result_value .= "function handle_keypress(event, element) {\n";
+            $result_value .= "var evt = event ? event : window.event;\n";
+            $result_value .= "var key = evt.keyCode ? evt.keyCode : evt.which;\n";
+            $result_value .= "if ((key == 13) || (key == 32)) {\n";
+            $result_value .= "event.preventDefault();\n";
+            $result_value .= "element.click();\n";
+            $result_value .= "}\n";
+            $result_value .= "}\n";
+            $result_value .= "</script>\n";
             $result_value .= "</head>\n";
             $result_value .= "<body>\n";
             $result_value .= "<div class=\"error_page\">\n";
-            $result_value .= "<div class=\"title\">\n";
+            $result_value .= "<div class=\"title\" role=\"alert\" aria-live=\"assertive\">\n";
             $result_value .= "<h1>ERROR: {$error_message_fixed}</h1>\n";
             $result_value .= "<div class=\"url\">\n";
             $server_parameters = ALLOW_OVERRIDE_PHP_SETTINGS ? '&amp;process_timeout=PROCESS_TIMEOUT&amp;process_memory_limit=PROCESS_MEMORY_LIMIT' : '';
@@ -97,7 +107,7 @@
             $result_value .= "</ul>\n";
             $result_value .= "</div>\n";
             $result_value .= "<div class=\"button\">\n";
-            $result_value .= "<a href=\"../index.php\">Back</a>\n";
+            $result_value .= "<a href=\"../index.php\" role=\"button\" tabindex=\"0\" onkeydown=\"handle_keypress(event, this)\">Back</a>\n";
             $result_value .= "</div>\n";
             $result_value .= "</div>\n";
             $result_value .= "</body>\n";
@@ -113,17 +123,35 @@
     //Check input
     $original_filename = null;
     if ($input_file) {
-        if (!isset($_FILES['input_file']['name'])) { die(handle_input_errors('Invalid input file!')); }
+        if (!isset($_FILES['input_file']['name'])) {
+            header('Content-Type: text/html; charset=utf-8');
+            die(handle_input_errors('Invalid input file!'));
+        }
         $original_filename = trim(basename($_FILES['input_file']['name']));
     } else {
-        if (!isset($_REQUEST['input_file'])) { die(handle_input_errors('Input file not provided!')); }
+        if (!isset($_REQUEST['input_file'])) {
+            header('Content-Type: text/html; charset=utf-8');
+            die(handle_input_errors('Input file not provided!'));
+        }
         $input_file = $_REQUEST['input_file'];
-        if (!$input_file) { die(handle_input_errors('Invalid input file!')); }
+        if (!$input_file) {
+            header('Content-Type: text/html; charset=utf-8');
+            die(handle_input_errors('Invalid input file!'));
+        }
         $original_filename = trim(basename($input_file));
     }
-    if (!file_exists($input_file)) { die(handle_input_errors('Input file does not exist!')); }
-    if (!$original_filename) { die(handle_input_errors('Invalid input filename!')); }
-    if ($encryption_password === false) { die(handle_input_errors('Encryption key not set!')); }
+    if (!file_exists($input_file)) {
+        header('Content-Type: text/html; charset=utf-8');
+        die(handle_input_errors('Input file does not exist!'));
+    }
+    if (!$original_filename) {
+        header('Content-Type: text/html; charset=utf-8');
+        die(handle_input_errors('Invalid input filename!'));
+    }
+    if ($encryption_password === false) {
+        header('Content-Type: text/html; charset=utf-8');
+        die(handle_input_errors('Encryption key not set!'));
+    }
     //Load Steganography class
     require_once(str_replace('\\', '/', __DIR__) . '/class.php_stego.php');
     $php_stego = new PHP_STEGO();
@@ -131,33 +159,57 @@
     $php_stego->set_compatibility_mode($compatibility_mode);
     $php_stego->set_printable_code($printable_code);
     if (!$php_stego->set_encryption_key($encryption_password)) {
+        header('Content-Type: text/html; charset=utf-8');
         die(handle_input_errors('Could not set encryption key!'));
     }
     if ($aspect_ratio) {
         if (!$php_stego->set_carrier_dimensions($aspect_ratio)) {
+            header('Content-Type: text/html; charset=utf-8');
             die(handle_input_errors('Could not set aspect ratio!'));
         }
     }
     if ($color_component) {
         if (!$php_stego->set_target_rgb_component($color_component)) {
+            header('Content-Type: text/html; charset=utf-8');
             die(handle_input_errors('Could not set target color component!'));
         }
     }
     //Create image from input file
     if ($bin_to_image) {
         if (!$carrier_file) {
-            if (!isset($_REQUEST['carrier_file'])) { die(handle_input_errors('Carrier file not provided!')); }
+            if (!isset($_REQUEST['carrier_file'])) {
+                header('Content-Type: text/html; charset=utf-8');
+                die(handle_input_errors('Carrier file not provided!'));
+            }
             $carrier_file = $_REQUEST['carrier_file'];
-            if (!$carrier_file) { die(handle_input_errors('Invalid carrier file!')); }
+            if (!$carrier_file) {
+                header('Content-Type: text/html; charset=utf-8');
+                die(handle_input_errors('Invalid carrier file!'));
+            }
         }
-        if (!file_exists($carrier_file)) { die(handle_input_errors('Carrier file does not exist!')); }
-        if (!preg_match('/\.(jpg|jpeg|png|gif|bmp|wbmp|gd2|webp)$/i', trim(basename($_FILES['carrier_file']['name'])))) { die(handle_input_errors('Carrier file must be a JPEG, PNG, GIF, BMP, WBMP, GD2 or WEBP image!')); }
-        if (!$php_stego->set_carrier_data(file_get_contents($carrier_file))) { die(handle_input_errors('Failed to load carrier file!')); }
-        if (!$php_stego->set_input_data(file_get_contents($input_file))) { die(handle_input_errors('Failed to load input file!')); }
+        if (!file_exists($carrier_file)) {
+            header('Content-Type: text/html; charset=utf-8');
+            die(handle_input_errors('Carrier file does not exist!'));
+        }
+        if (!preg_match('/\.(jpg|jpeg|png|gif|bmp|wbmp|gd2|webp)$/i', trim(basename($_FILES['carrier_file']['name'])))) {
+            header('Content-Type: text/html; charset=utf-8');
+            die(handle_input_errors('Carrier file must be a JPEG, PNG, GIF, BMP, WBMP, GD2 or WEBP image!'));
+        }
+        if (!$php_stego->set_carrier_data(file_get_contents($carrier_file))) {
+            header('Content-Type: text/html; charset=utf-8');
+            die(handle_input_errors('Failed to load carrier file!'));
+        }
+        if (!$php_stego->set_input_data(file_get_contents($input_file))) {
+            header('Content-Type: text/html; charset=utf-8');
+            die(handle_input_errors('Failed to load input file!'));
+        }
         $php_stego->set_original_filename($original_filename);
         $php_stego->set_compression_level($compression_level);
         $output_file = $php_stego->convert();
-        if (!$output_file) { die(handle_input_errors('Failed to create image from binary data!')); }
+        if (!$output_file) {
+            header('Content-Type: text/html; charset=utf-8');
+            die(handle_input_errors('Failed to create image from binary data!'));
+        }
         if ($printable_code) {
             header('Content-Type: text/plain');
         } else {
@@ -174,12 +226,21 @@
     }
     //Create binary data from input file
     if (!$printable_code) {
-        if (!preg_match('/\.(jpg|jpeg|png|gif|bmp|wbmp|gd2|webp)$/i', $original_filename)) { die(handle_input_errors('Input file must be a JPEG, PNG, GIF, BMP, WBMP, GD2 or WEBP image!')); }
+        if (!preg_match('/\.(jpg|jpeg|png|gif|bmp|wbmp|gd2|webp)$/i', $original_filename)) {
+            header('Content-Type: text/html; charset=utf-8');
+            die(handle_input_errors('Input file must be a JPEG, PNG, GIF, BMP, WBMP, GD2 or WEBP image!'));
+        }
     }
-    if (!$php_stego->set_input_data(file_get_contents($input_file))) { die(handle_input_errors('Failed to load input file!')); }
+    if (!$php_stego->set_input_data(file_get_contents($input_file))) {
+        header('Content-Type: text/html; charset=utf-8');
+        die(handle_input_errors('Failed to load input file!'));
+    }
     if (DISABLE_CHECKSUM_VALIDATION) { $php_stego->set_checksum_validation(false); }
     $output_file = $php_stego->convert();
-    if (!$output_file) { die(handle_input_errors('Failed to create output! Incorrect password or corrupted file?')); }
+    if (!$output_file) {
+        header('Content-Type: text/html; charset=utf-8');
+        die(handle_input_errors('Failed to create output! Incorrect password or corrupted file?'));
+    }
     header('Content-Description: File Transfer');
     header('Content-Type: application/octet-stream');
     header('Content-Disposition: attachment; filename="' . $php_stego->get_new_filename() . '"');
