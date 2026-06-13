@@ -180,7 +180,7 @@
          */
         public function set_carrier_dimensions($new_carrier_dimensions) {
             try {
-                $new_carrier_dimensions_fixed = strtoupper(trim($new_carrier_dimensions));
+                $new_carrier_dimensions_fixed = strtoupper(trim((string) $new_carrier_dimensions));
                 if (!$new_carrier_dimensions_fixed) { return false; }
                 if ($new_carrier_dimensions_fixed == 'AUTO') {
                     $this->selected_carrier_dimension = $new_carrier_dimensions_fixed;
@@ -202,7 +202,7 @@
          */
         public function set_target_rgb_component($new_target_rgb_component) {
             try {
-                $new_target_rgb_component_fixed = strtoupper(trim($new_target_rgb_component));
+                $new_target_rgb_component_fixed = strtoupper(trim((string) $new_target_rgb_component));
                 if (!$new_target_rgb_component_fixed) { return false; }
                 if (!preg_match('/^(RED|GREEN|BLUE|ALPHA)$/', $new_target_rgb_component_fixed)) { return false; }
                 $this->target_rgb_component = $new_target_rgb_component_fixed;
@@ -220,7 +220,7 @@
          */
         public function set_encryption_key($new_encryption_key) {
             try {
-                $new_encryption_key_fixed = trim($new_encryption_key);
+                $new_encryption_key_fixed = trim((string) $new_encryption_key);
                 if (!(strlen($new_encryption_key_fixed) >= 0)) { return false; }
                 $this->encryption_key = $new_encryption_key_fixed;
                 return true;
@@ -254,7 +254,7 @@
          */
         public function set_original_filename($new_original_filename) {
             try {
-                $new_original_filename_fixed = trim($new_original_filename);
+                $new_original_filename_fixed = trim((string) $new_original_filename);
                 if (strlen($new_original_filename_fixed) >= 1) {
                     $this->original_filename = $new_original_filename_fixed;
                 } else {
@@ -335,7 +335,7 @@
             try {
                 //Check basic encryption parameters
                 if (!$input_data) { return null; }
-                $encryption_key_fixed = trim($encryption_key);
+                $encryption_key_fixed = trim((string) $encryption_key);
                 if (!(strlen($encryption_key_fixed) >= 1)) { return null; }
                 if (strlen($encryption_key_fixed) > self::MAX_KEY_LENGTH) { return null; }
                 $input_data_modified = "ENCRYPTED#{$input_data}";
@@ -379,7 +379,7 @@
         public static function decrypt_data($input_data, $encryption_key, $compatibility_mode = false) {
             try {
                 if (!$input_data) { return null; }
-                $encryption_key_fixed = trim($encryption_key);
+                $encryption_key_fixed = trim((string) $encryption_key);
                 if (!(strlen($encryption_key_fixed) >= 1)) { return null; }
                 if (strlen($encryption_key_fixed) > self::MAX_KEY_LENGTH) { return null; }
                 if ($compatibility_mode) {
@@ -468,7 +468,7 @@
                 $input_data_hexadecimal = str_replace(
                     array('O', 'I', 'G', 'X', 'L', 'Y', 'Z', 'N'),
                     array('0', '1', '4', '8', 'A', 'B', 'E', 'F'),
-                    strtoupper(trim($input_data)));
+                    strtoupper(trim((string) $input_data)));
                 if (!$input_data_hexadecimal) { return null; }
                 return self::hex2bin_fallback($input_data_hexadecimal);
             } catch (Exception $x) {
@@ -484,13 +484,13 @@
         public function convert() {
             try {
                 if (!$this->input_data) { return null; }
-                if (!(strlen($this->encryption_key) >= 1)) { return null; }
+                if (!(strlen((string) $this->encryption_key) >= 1)) { return null; }
                 //Create image from input data
                 if ($this->encoding_direction) {
                     $input_data_final = gzcompress($this->input_data, $this->compression_level);
                     if (!$input_data_final) { return null; }
                     $input_data_final = 'CHECKSUM_MD5:' . md5($input_data_final) . "#{$input_data_final}";
-                    if (strlen($this->original_filename) >= 1) {
+                    if (strlen((string) $this->original_filename) >= 1) {
                         $base_filename = trim(pathinfo($this->original_filename, PATHINFO_FILENAME));
                         if (strlen($base_filename) >= 1) {
                             if ($this->printable_code) {

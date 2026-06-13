@@ -13,7 +13,7 @@
     /** @endcond */
 
     /** Max upload filesize defined in `php.ini` */
-    $max_upload_size = trim(ini_get('upload_max_filesize'));
+    $max_upload_size = trim((string) ini_get('upload_max_filesize'));
 
     /** Max upload filesize in bytes (calculated) */
     $max_upload_size_bytes = null;
@@ -241,12 +241,12 @@
                 <div class="title">
                     <h2>Process timeout (advanced)</h2>
                     <p class="description">Time limit for the conversion process in secods. If you set it 0, there will be no time limit.</p>
-                    <input class="large" type="text" name="process_timeout" maxlength="4" value="<?php echo trim(ini_get('max_execution_time')); ?>"/>
+                    <input class="large" type="text" name="process_timeout" maxlength="4" value="<?php echo trim((string) ini_get('max_execution_time')); ?>"/>
                 </div>
                 <div class="title">
                     <h2>Process memory limit (advanced)</h2>
                     <p class="description">Memory limit for the conversion process. If you set it -1, there will be no limit. If you omit (K, M or G) at the end, the value will be considered bytes.</p>
-                    <input class="large" type="text" name="process_memory_limit" maxlength="8" value="<?php echo trim(ini_get('memory_limit')); ?>"/>
+                    <input class="large" type="text" name="process_memory_limit" maxlength="8" value="<?php echo trim((string) ini_get('memory_limit')); ?>"/>
                 </div>
             <?php endif; ?>
             <div class="title">

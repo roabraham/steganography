@@ -62,7 +62,7 @@
      */
     function handle_input_errors($error_message) {
         try {
-            $error_message_fixed = trim($error_message);
+            $error_message_fixed = trim((string) $error_message);
             if (!$error_message_fixed) { $error_message_fixed = 'Unknown error!'; }
             $result_value = "<!DOCTYPE html>\n";
             $result_value .= "<html>\n";
